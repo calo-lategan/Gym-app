@@ -207,8 +207,11 @@ export interface Item {
   source: string;
 }
 
+export type HeroClass = 'knight' | 'barbarian' | 'mage' | 'rogue';
+
 export interface Hero {
   name: string;
+  heroClass: HeroClass;
   level: number;
   /** XP earned inside the current level. */
   xp: number;
@@ -224,6 +227,10 @@ export interface Hero {
   activeTitle: string | null;
   streak: Streak;
   pity: { sinceRare: number; sinceEpic: number };
+  /** Body weight milestones already rewarded for the current goal. */
+  weightMilestones: number;
+  /** Lifetime recovery check-ins, for Vitality. */
+  checkIns: number;
 }
 
 export interface Streak {

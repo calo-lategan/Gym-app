@@ -43,6 +43,7 @@
   "devDependencies": {
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/functions": "^4.5.1",
+    "@playwright/test": "^1.56.1",
     "@react-native/jest-preset": "^0.86.3",
     "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^29.5.14",
