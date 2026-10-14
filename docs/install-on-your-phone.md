@@ -1,0 +1,141 @@
+# Install Ironwyrm on your Android phone
+
+You build the app once in Expo's cloud from your laptop, then install the file
+it gives you on your phone. No Play Store needed. Plan for 30 to 60 minutes the
+first time; most of it is waiting.
+
+## What you need
+
+- A Windows or Mac laptop with internet.
+- Your Android phone.
+- A free Expo account: sign up at https://expo.dev/signup and remember your
+  username and password.
+
+## Step 1. Install two free tools on the laptop
+
+1. **Node.js:** go to https://nodejs.org, download the version marked **LTS**,
+   run the installer and keep clicking Next until it finishes.
+2. **Git:**
+   - Windows: go to https://git-scm.com/download/win, download Git for
+     Windows, run it and keep clicking Next (the defaults are fine).
+   - Mac: skip this. The Mac offers to install it in step 3.
+
+## Step 2. Open a terminal
+
+The terminal is a window where you type commands.
+
+- **Windows:** press the Start key, type `cmd` and open **Command Prompt**. Use
+  Command Prompt, not PowerShell, because PowerShell blocks one of the tools.
+- **Mac:** press Cmd and Space together, type `Terminal` and press Enter.
+
+How to use it: copy one line from the boxes below, paste it into the terminal
+(right-click or Ctrl+V on Windows, Cmd+V on Mac), press Enter, and wait until it
+finishes and you can type again before you paste the next line.
+
+If you installed Node.js or Git while the terminal was open, close it and open
+a new one so it can find them.
+
+## Step 3. Download the app's code
+
+```
+git clone --branch claude/gallant-feynman-ycxw6a https://github.com/calo-lategan/Gym-app.git
+```
+
+```
+cd Gym-app
+```
+
+On a Mac, if a window asks to install the "command line developer tools", click
+Install, wait for it to finish, then paste the first line again.
+
+## Step 4. Install the app's building blocks
+
+```
+npm install
+```
+
+This takes a few minutes. Yellow warnings are normal.
+
+## Step 5. Sign in to Expo and link the project
+
+```
+npx eas-cli@latest login
+```
+
+- If it asks `Ok to proceed? (y)`, type `y` and press Enter.
+- Type your Expo username or email, then your password. The password stays
+  invisible while you type. That is normal.
+
+```
+npx eas-cli@latest init
+```
+
+- When it asks to create a project for `@yourname/ironwyrm`, type `y` and press
+  Enter.
+
+## Step 6. Build the app
+
+```
+npx eas-cli@latest build --platform android --profile preview
+```
+
+- `Generate a new Android Keystore?` Type `y`. This is the app's signing key;
+  Expo keeps it safe for you.
+- If it asks any other yes or no question, press Enter to accept the default.
+
+It then uploads the code and builds the app on Expo's computers. Free builds
+wait in a queue, so this can take 10 to 60 minutes. You can close the terminal;
+the build keeps going. When it is done, the terminal shows a QR code and a
+link, and you get an email from Expo.
+
+## Step 7. Install it on your phone
+
+1. Scan the QR code with your phone's camera. Or, on the phone, open
+   https://expo.dev, sign in, then go to Projects, ironwyrm, Builds and tap the
+   newest build.
+2. Tap **Install** to download the file. It ends in `.apk`.
+3. Open the file. If Android says your browser is not allowed to install apps,
+   tap Settings, turn on **Allow from this source**, go back and tap Install.
+4. If Play Protect warns that the app is unrecognised, tap **More details**,
+   then **Install anyway**. It warns only because the app is not on the Play
+   Store yet.
+5. Open **Ironwyrm** from your apps. Allow notifications when it asks, so your
+   gym reminders work.
+
+## Step 8. Send Claude two details (one time)
+
+After step 5, the terminal printed your project ID (it also shows on your
+project page at expo.dev). Send Claude:
+
+- your Expo username, and
+- the project ID.
+
+Neither is a password, so they are safe to share. Claude adds them to the code
+so the next step works.
+
+## Getting a newer version later, from your phone
+
+Once Claude has added your details, you never need the laptop again.
+
+1. One time only: on expo.dev, open Projects, ironwyrm, then Project settings,
+   GitHub, and connect the **Gym-app** repository (leave the folder as `/`).
+2. Whenever you want the latest version: open Projects, ironwyrm, Builds and
+   tap **Build from GitHub**. Choose the branch
+   `claude/gallant-feynman-ycxw6a`, platform **Android** and profile
+   **preview**, then start the build.
+3. When it finishes, install it exactly like step 7. It replaces the old app
+   and keeps your hero, history and records.
+
+You can still build from the laptop instead. In the `Gym-app` folder, run
+`git pull --autostash`, then `npm install`, then the build command from step 6.
+
+## If something goes wrong
+
+- **`'git'`, `'npm'` or `'npx'` is not recognized:** close the terminal and
+  open a new one. If it still happens, run the Node.js or Git installer again.
+- **"running scripts is disabled on this system":** you are in PowerShell.
+  Open Command Prompt instead (step 2).
+- **The build fails:** open the build link, scroll to the red error message,
+  copy it and send it to Claude.
+- **Your phone refuses apps from unverified developers** (a newer Android rule
+  in some countries): send a message and we will use another way to install.

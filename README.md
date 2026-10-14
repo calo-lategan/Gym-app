@@ -60,6 +60,10 @@ It targets Android first (Google Play), and also runs on iOS and the web.
 
 ## Getting started
 
+New to this? [Install Ironwyrm on your Android phone](docs/install-on-your-phone.md) walks through it step by step.
+
+For development:
+
 ```bash
 npm install
 npx expo start
