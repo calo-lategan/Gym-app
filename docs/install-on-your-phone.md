@@ -80,9 +80,11 @@ npx eas-cli@latest build --platform android --profile preview
 - If it asks any other yes or no question, press Enter to accept the default.
 
 It then uploads the code and builds the app on Expo's computers. Free builds
-wait in a queue, so this can take 10 to 60 minutes. You can close the terminal;
-the build keeps going. When it is done, the terminal shows a QR code and a
-link, and you get an email from Expo.
+first wait in a shared queue: anywhere from a few minutes to two hours, longest
+during North American mornings. The build itself then takes about 15 to 25
+minutes. You can close the terminal; the build keeps going. When it is done,
+the terminal shows a QR code and a link, and the build page on expo.dev shows
+an Install button (step 7).
 
 ## Step 7. Install it on your phone
 
