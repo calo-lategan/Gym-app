@@ -75,7 +75,8 @@
     "icons": "python3 scripts/build-icons.py",
     "sounds": "python3 scripts/build-sounds.py",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check:native": "node scripts/check-native-bundle.mjs"
   },
   "private": true,
   "jest": {

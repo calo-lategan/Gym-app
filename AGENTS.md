@@ -64,4 +64,5 @@ A gamified gym tracker: real training logic underneath, a 3D dungeon crawler on 
 
 - `npm run check` for types, lint, format and unit tests.
 - `npm run test:e2e` exports the web build and runs Playwright at phone size (SwiftShader WebGL renders the 3D scenes headless).
+- `npm run check:native` exports the Android bundle and fails on Node-only `process` calls, which crash the app on launch even though web and Jest pass (CI runs it).
 - Android-specific behaviour (notifications, haptics, native pickers) needs a development build on a device.
