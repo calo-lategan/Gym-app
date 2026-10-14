@@ -36,6 +36,7 @@ import type {
 } from '@/domain/types';
 
 import { parseBackup, serializeBackup } from './backup';
+import { takeSceneCrashFlag } from './scene-watch';
 import { initialGameState, initialHistoryState, useGame, useHistory, type ActiveWorkout, type Settings, type StoredOutcome } from './stores';
 
 const today = () => dayKeyOf(new Date());
@@ -860,6 +861,22 @@ export function renameHero(name: string) {
 
 export function updateSettings(patch: Partial<Settings>) {
   useGame.setState({ settings: { ...useGame.getState().settings, ...patch } });
+}
+
+export const SCENE_CRASH_NOTICE = '3D graphics closed the app last time, so they are off. You can turn them back on in Settings.';
+
+/**
+ * Called at launch. If the app closed while a 3D scene was starting, keep 3D
+ * off so the next launch cannot crash the same way.
+ */
+export function recoverFromSceneCrash(): boolean {
+  if (!takeSceneCrashFlag()) return false;
+  const state = useGame.getState();
+  useGame.setState({
+    settings: { ...state.settings, graphics: 'lite' },
+    notices: state.notices.includes(SCENE_CRASH_NOTICE) ? state.notices : [...state.notices, SCENE_CRASH_NOTICE],
+  });
+  return true;
 }
 
 export function exportData(): string {

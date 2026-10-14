@@ -1,18 +1,28 @@
 import { GrenzeGotisch_600SemiBold, GrenzeGotisch_700Bold, GrenzeGotisch_800ExtraBold, useFonts } from '@expo-google-fonts/grenze-gotisch';
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { CrashScreen } from '@/components/crash-screen';
 import { ToastHost } from '@/components/toast';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
 import { sheetOptions } from '@/navigation/options';
+import { clearCrash, installCrashHandler, markAppOnScreen, useCrash } from '@/services/crash';
+import { recoverFromSceneCrash } from '@/state/actions';
 import { useGame } from '@/state/stores';
 import { colors, fonts } from '@/theme';
 
+installCrashHandler();
+recoverFromSceneCrash();
 void SplashScreen.preventAutoHideAsync();
+
+/** Render errors anywhere in the app land here instead of closing it. */
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return <CrashScreen error={error} onRetry={() => void retry()} />;
+}
 
 const navTheme = {
   ...DarkTheme,
@@ -34,13 +44,19 @@ export default function RootLayout() {
     GrenzeGotisch_800ExtraBold,
   });
   const onboarded = useGame((s) => s.onboarded);
+  const crash = useCrash((s) => s.error);
   const ready = fontsLoaded || Boolean(fontError);
   useAppLifecycle(ready && onboarded);
+
+  useEffect(() => {
+    markAppOnScreen();
+  }, []);
 
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();
   }, [ready]);
 
+  if (crash) return <CrashScreen error={crash} onRetry={clearCrash} />;
   if (!ready) return <View style={{ flex: 1, backgroundColor: colors.abyss }} />;
 
   return (

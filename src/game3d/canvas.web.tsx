@@ -3,9 +3,18 @@ import { StyleSheet, View } from 'react-native';
 import * as THREE from 'three';
 
 import type { GameCanvasProps } from './canvas';
+import { guardRender, SceneGuard } from './scene-guard';
 
 /** Browser 3D canvas (WebGL). Same props as the native version. */
-export function GameCanvas({ children, style, camera, frameloop = 'always', onCreated }: GameCanvasProps) {
+export function GameCanvas(props: GameCanvasProps) {
+  return (
+    <SceneGuard style={props.style}>
+      <WebCanvas {...props} />
+    </SceneGuard>
+  );
+}
+
+function WebCanvas({ children, style, camera, frameloop = 'always', onCreated }: GameCanvasProps) {
   return (
     <View style={[styles.fill, style]} pointerEvents="box-none">
       <Canvas
@@ -18,6 +27,7 @@ export function GameCanvas({ children, style, camera, frameloop = 'always', onCr
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.15;
           gl.outputColorSpace = THREE.SRGBColorSpace;
+          guardRender(gl);
           onCreated?.();
         }}
       >
