@@ -888,3 +888,15 @@ export function resetAll() {
   useGame.setState(initialGameState());
   useHistory.setState(initialHistoryState());
 }
+
+/** Double-progression suggestion for an exercise based on its most recent session. */
+export function suggestionFor(exerciseId: string, repMin: number, repMax: number) {
+  const exercise = findExercise(exerciseId);
+  if (!exercise) return null;
+  return suggestNextTarget(exercise, lastSetsFor(exerciseId), repMin, repMax, useGame.getState().profile.unit);
+}
+
+/** The sets from the most recent session that included this exercise. */
+export function lastTimeFor(exerciseId: string): SetLog[] {
+  return lastSetsFor(exerciseId);
+}

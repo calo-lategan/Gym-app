@@ -85,7 +85,8 @@ export function preload(names: SoundName[]) {
 
 export function startAmbience() {
   const settings = useGame.getState().settings;
-  if (!settings.sound || !settings.ambience) return;
+  // Browsers block autoplay before a gesture, so ambience is a native-only touch.
+  if (!settings.sound || !settings.ambience || process.env.EXPO_OS === 'web') return;
   try {
     if (!ambience) {
       ambience = createAudioPlayer(AMBIENCE);

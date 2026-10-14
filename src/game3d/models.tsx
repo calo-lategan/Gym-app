@@ -55,8 +55,16 @@ export interface OneShot {
   speed?: number;
 }
 
+export interface MeshGlow {
+  meshes: string[];
+  color: THREE.ColorRepresentation;
+  intensity: number;
+}
+
 export interface CharacterProps {
   model: number;
+  /** Extra emissive glow on specific meshes, such as a rare weapon. */
+  glow?: MeshGlow | null;
   animations: number[];
   /** Looping base animation. */
   action: string;
@@ -70,6 +78,8 @@ export interface CharacterProps {
   scale?: number;
   /** Speed of the base loop. */
   timeScale?: number;
+  /** Play the base action once and hold the last frame (for deaths). */
+  holdAction?: boolean;
   onOneShotEnd?: (name: string) => void;
   onPointerDown?: () => void;
 }
@@ -80,12 +90,14 @@ export function Character({
   action,
   oneShot,
   visible,
+  glow,
   emissive,
   emissiveIntensity,
   position,
   rotation,
   scale = 1,
   timeScale = 1,
+  holdAction = false,
   onOneShotEnd,
   onPointerDown,
 }: CharacterProps) {
@@ -108,6 +120,21 @@ export function Character({
     });
   }, [root, visible]);
 
+  const glowKey = glow ? `${glow.meshes.join(',')}|${String(glow.color)}|${glow.intensity}` : '';
+  useEffect(() => {
+    if (!glow) return;
+    root.traverse((obj) => {
+      const mesh = obj as THREE.Mesh;
+      if (!mesh.isMesh || !glow.meshes.includes(mesh.name)) return;
+      const material = (mesh.material as THREE.MeshLambertMaterial).clone();
+      material.emissive = new THREE.Color(glow.color);
+      material.emissiveIntensity = glow.intensity;
+      mesh.material = material;
+    });
+    // glowKey captures the glow contents.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [root, glowKey]);
+
   const mixer = useMemo(() => new THREE.AnimationMixer(root), [root]);
   const base = useRef<THREE.AnimationAction | null>(null);
   const endCallback = useRef(onOneShotEnd);
@@ -119,7 +146,9 @@ export function Character({
     const clip = clipByName(action);
     if (!clip) return;
     const next = mixer.clipAction(clip);
-    next.reset().setLoop(THREE.LoopRepeat, Infinity).fadeIn(0.25).play();
+    next.reset().setLoop(holdAction ? THREE.LoopOnce : THREE.LoopRepeat, holdAction ? 1 : Infinity);
+    next.clampWhenFinished = holdAction;
+    next.fadeIn(0.15).play();
     next.timeScale = timeScale;
     if (base.current && base.current !== next) base.current.fadeOut(0.25);
     base.current = next;

@@ -1,0 +1,13 @@
+import { Stack } from 'expo-router';
+import { View } from 'react-native';
+
+import { Text } from '@/components/text';
+
+export default function Placeholder() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Stack.Screen options={{ title: 'Dungeon' }} />
+      <Text variant="title">Dungeon</Text>
+    </View>
+  );
+}
