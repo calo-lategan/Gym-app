@@ -73,6 +73,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3320a190-3b16-4a4b-8ef5-c0dd3eeab320"
+      }
+    },
+    "owner": "calolategan"
   }
 }

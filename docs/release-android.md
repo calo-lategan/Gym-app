@@ -9,14 +9,9 @@ Builds run in the cloud with EAS, so no Android Studio is needed. Commands use
    `com.calolategan.ironwyrm`. Google Play never lets you change it after the
    first upload, so change it now if you want another one (also update
    `ios.bundleIdentifier`).
-2. **Create the EAS project** (needs a free Expo account):
-
-   ```bash
-   npx eas-cli@latest login
-   npx eas-cli@latest init
-   ```
-
-   This writes `extra.eas.projectId` into `app.json`. Commit it.
+2. **EAS project:** already created. `app.json` links to `@calolategan/ironwyrm`
+   through `owner` and `extra.eas.projectId`, so sign in with
+   `npx eas-cli@latest login` and build.
 3. **Host the privacy policy.** Play needs a public URL. Put
    `docs/privacy-policy.md` on any static host (GitHub Pages on a public repo,
    a gist, Notion, your site) after replacing `SUPPORT_EMAIL`.

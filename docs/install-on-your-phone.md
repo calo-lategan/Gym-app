@@ -56,7 +56,7 @@ npm install
 
 This takes a few minutes. Yellow warnings are normal.
 
-## Step 5. Sign in to Expo and link the project
+## Step 5. Sign in to Expo
 
 ```
 npx eas-cli@latest login
@@ -66,12 +66,8 @@ npx eas-cli@latest login
 - Type your Expo username or email, then your password. The password stays
   invisible while you type. That is normal.
 
-```
-npx eas-cli@latest init
-```
-
-- When it asks to create a project for `@yourname/ironwyrm`, type `y` and press
-  Enter.
+The code is already linked to your `ironwyrm` project on Expo, so there is
+nothing else to set up.
 
 ## Step 6. Build the app
 
@@ -102,20 +98,9 @@ link, and you get an email from Expo.
 5. Open **Ironwyrm** from your apps. Allow notifications when it asks, so your
    gym reminders work.
 
-## Step 8. Send Claude two details (one time)
-
-After step 5, the terminal printed your project ID (it also shows on your
-project page at expo.dev). Send Claude:
-
-- your Expo username, and
-- the project ID.
-
-Neither is a password, so they are safe to share. Claude adds them to the code
-so the next step works.
-
 ## Getting a newer version later, from your phone
 
-Once Claude has added your details, you never need the laptop again.
+After the first build, you never need the laptop again.
 
 1. One time only: on expo.dev, open Projects, ironwyrm, then Project settings,
    GitHub, and connect the **Gym-app** repository (leave the folder as `/`).
@@ -126,8 +111,24 @@ Once Claude has added your details, you never need the laptop again.
 3. When it finishes, install it exactly like step 7. It replaces the old app
    and keeps your hero, history and records.
 
-You can still build from the laptop instead. In the `Gym-app` folder, run
-`git pull --autostash`, then `npm install`, then the build command from step 6.
+You can still build from the laptop instead. Open a terminal in the `Gym-app`
+folder and run these one at a time, then the build command from step 6:
+
+```
+git fetch
+```
+
+```
+git reset --hard origin/claude/gallant-feynman-ycxw6a
+```
+
+```
+npm install
+```
+
+The second line makes your copy exactly match the latest code and drops any
+changes the tools made to it. Your hero and progress live on the phone, so
+nothing of yours is lost.
 
 ## If something goes wrong
 
