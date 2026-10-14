@@ -34,15 +34,16 @@ function HitSpark({ sparkKey, color, position }: { sparkKey: number; color: stri
     [color],
   );
   useFrame(({ clock }) => {
-    if (!ref.current) return;
+    const sprite = ref.current;
+    if (!sprite) return;
     if (last.current !== sparkKey) {
       last.current = sparkKey;
       started.current = clock.elapsedTime;
     }
     const age = started.current === null ? 9 : clock.elapsedTime - started.current;
     const s = 0.6 + age * 7;
-    ref.current.scale.set(s, s, 1);
-    material.opacity = Math.max(0, 1 - age * 4);
+    sprite.scale.set(s, s, 1);
+    sprite.material.opacity = Math.max(0, 1 - age * 4);
   });
   return <sprite ref={ref} position={position} material={material} />;
 }
@@ -73,18 +74,26 @@ export function BattleScene({ hero, floor, monster, strikeKey, crit, monsterDead
   const [shake, setShake] = useState(0);
   const [spark, setSpark] = useState(0);
   const [dying, setDying] = useState(false);
+  const [seen, setSeen] = useState({ monster: monster.id, strike: strikeKey });
 
-  // A new monster rises from the floor.
-  useEffect(() => {
-    setDying(false);
-    setMonsterShot((s) => ({ name: 'Spawn_Ground_Skeletons', key: (s?.key ?? 0) + 1 }));
-  }, [monster.id]);
+  // React to a new foe or a new strike while rendering, so the 3D props change
+  // in the same pass instead of after an extra effect render.
+  if (seen.monster !== monster.id || seen.strike !== strikeKey) {
+    setSeen({ monster: monster.id, strike: strikeKey });
+    if (seen.monster !== monster.id) {
+      // A new monster rises from the floor.
+      setDying(false);
+      setMonsterShot((s) => ({ name: 'Spawn_Ground_Skeletons', key: (s?.key ?? 0) + 1 }));
+    }
+    if (seen.strike !== strikeKey && strikeKey !== 0) {
+      const attacks = crit || monsterDead ? [loadout.finisher] : loadout.attacks;
+      setHeroShot((s) => ({ name: attacks[strikeKey % attacks.length], key: (s?.key ?? 0) + 1, speed: 1.25 }));
+    }
+  }
 
-  // Hero swings, then the blow lands a beat later.
+  // The blow lands a beat after the swing.
   useEffect(() => {
     if (strikeKey === 0) return;
-    const attacks = crit || monsterDead ? [loadout.finisher] : loadout.attacks;
-    setHeroShot((s) => ({ name: attacks[strikeKey % attacks.length], key: (s?.key ?? 0) + 1, speed: 1.25 }));
     const t = setTimeout(() => {
       setShake((k) => k + 1);
       setSpark((k) => k + 1);

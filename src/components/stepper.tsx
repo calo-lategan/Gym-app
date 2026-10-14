@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { haptics } from '@/services/haptics';
@@ -34,7 +34,9 @@ export function Stepper({
   compact?: boolean;
 }) {
   const latest = useRef(value);
-  latest.current = value;
+  useEffect(() => {
+    latest.current = value;
+  }, [value]);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nudge = (direction: 1 | -1) => {
@@ -80,6 +82,10 @@ export function Stepper({
     </Pressable>
   );
 
+  const text = format(value);
+  // adjustsFontSizeToFit is native only, so long values also step down in size.
+  const fontSize = compact ? (text.length > 4 ? 20 : text.length > 3 ? 23 : 28) : text.length > 6 ? 24 : 28;
+
   return (
     <View style={{ gap: spacing.xs, flex: 1 }}>
       <Text variant="label" align="center">
@@ -92,11 +98,11 @@ export function Stepper({
         accessibilityValue={{ text: format(value) }}
         accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
         onAccessibilityAction={(e) => nudge(e.nativeEvent.actionName === 'increment' ? 1 : -1)}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: compact ? spacing.xs : spacing.sm }}
       >
         {button(-1)}
-        <Text testID={testID ? `${testID}-value` : undefined} variant="stat" align="center" style={{ flex: 1, fontSize: 28, lineHeight: 34 }} numberOfLines={1} adjustsFontSizeToFit>
-          {format(value)}
+        <Text testID={testID ? `${testID}-value` : undefined} variant="stat" align="center" style={{ flex: 1, fontSize, lineHeight: 34 }} numberOfLines={1} adjustsFontSizeToFit>
+          {text}
         </Text>
         {button(1)}
       </View>

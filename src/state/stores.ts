@@ -63,6 +63,8 @@ export interface StoredOutcome {
   gold: number;
   statGains: Partial<Stats>;
   levelBefore: number;
+  /** XP into `levelBefore` when the workout ended, so the bar can replay the gain. */
+  xpBefore: number;
   levelAfter: number;
   levelsGained: number;
   prs: PrEvent[];

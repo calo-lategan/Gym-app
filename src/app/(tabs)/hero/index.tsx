@@ -1,13 +1,12 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
 
-import { Text } from '@/components/text';
+import { HeroScreen } from '@/screens/hero';
 
-export default function Placeholder() {
+export default function HeroRoute() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Stack.Screen options={{ title: 'Hero' }} />
-      <Text variant="title">Hero</Text>
-    </View>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <HeroScreen />
+    </>
   );
 }

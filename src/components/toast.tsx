@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,15 +29,11 @@ export function ToastHost() {
   const queue = useToasts((s) => s.queue);
   const current = queue[0];
   const insets = useSafeAreaInsets();
-  const [visible, setVisible] = useState<ToastMessage | null>(null);
+  const visible = current;
 
   useEffect(() => {
     if (!current) return;
-    setVisible(current);
-    const t = setTimeout(() => {
-      setVisible(null);
-      useToasts.setState((s) => ({ queue: s.queue.slice(1) }));
-    }, 3200);
+    const t = setTimeout(() => useToasts.setState((s) => ({ queue: s.queue.slice(1) })), 3200);
     return () => clearTimeout(t);
   }, [current]);
 

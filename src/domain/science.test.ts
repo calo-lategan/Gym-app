@@ -7,7 +7,9 @@ import {
   assessPlan,
   assessWeightRate,
   checkLoadJump,
+  pushPullBalance,
   recoveryTargets,
+  weeklyPlanSets,
   weeklySets,
   weeklyWeightChangePct,
 } from './science';
@@ -200,5 +202,28 @@ describe('readiness', () => {
     const input: ReadinessInput = { ...rested, soreness: { chest: 2 } };
     const adjusted = adjustPlanForReadiness(chestDay, input, scoreReadiness(input), ['barbell', 'bench', 'dumbbells', 'cable']);
     expect(adjusted.day.exercises[0].sets).toBe(3);
+  });
+});
+
+describe('weekly plan totals', () => {
+  const day = (id: string, exercises: [string, number][]): ProgramDay => ({
+    id,
+    name: id,
+    label: id,
+    exercises: exercises.map(([exerciseId, sets], i) => ({ id: `${id}${i}`, exerciseId, sets, repMin: 8, repMax: 12, restSec: 90 })),
+  });
+  const push = day('push', [['bench_press', 3], ['overhead_press', 3]]);
+  const pull = day('pull', [['barbell_row', 3], ['pull_up', 3], ['barbell_curl', 2]]);
+
+  it('cycles the program days across the sessions in a week', () => {
+    const totals = weeklyPlanSets([push, pull], 3);
+    // push, pull, push
+    expect(totals.chest).toBe(6);
+    expect(totals.back).toBe(6);
+  });
+
+  it('counts upper body push against pull sets', () => {
+    expect(pushPullBalance([push, pull], 2)).toEqual({ push: 6, pull: 8 });
+    expect(pushPullBalance([], 3)).toEqual({ push: 0, pull: 0 });
   });
 });

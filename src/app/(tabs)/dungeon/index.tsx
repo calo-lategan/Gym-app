@@ -1,13 +1,12 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
 
-import { Text } from '@/components/text';
+import { DungeonScreen } from '@/screens/dungeon';
 
-export default function Placeholder() {
+export default function DungeonRoute() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Stack.Screen options={{ title: 'Dungeon' }} />
-      <Text variant="title">Dungeon</Text>
-    </View>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <DungeonScreen />
+    </>
   );
 }

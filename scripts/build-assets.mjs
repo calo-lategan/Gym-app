@@ -18,6 +18,7 @@
  *
  * Requires python3 with Pillow for texture resizing.
  */
+import { Buffer } from 'node:buffer';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

@@ -2,7 +2,6 @@ import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-aud
 
 import { useGame } from '@/state/stores';
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 const SOURCES = {
   tap: require('@/assets/sounds/tap.mp3'),
   setStart: require('@/assets/sounds/set-start.mp3'),
@@ -25,14 +24,15 @@ const SOURCES = {
   gateOpen: require('@/assets/sounds/gate-open.mp3'),
   streak: require('@/assets/sounds/streak.mp3'),
   dragonRoar: require('@/assets/sounds/dragon-roar.mp3'),
+  victory: require('@/assets/sounds/victory.mp3'),
+  statUp: require('@/assets/sounds/stat-up.mp3'),
 } as const;
 const AMBIENCE = require('@/assets/sounds/ambience-dungeon.mp3');
-/* eslint-enable @typescript-eslint/no-require-imports */
 
 export type SoundName = keyof typeof SOURCES;
 
 /** Sounds that can fire in quick succession get a small pool of players. */
-const POOL_SIZE: Partial<Record<SoundName, number>> = { xpTick: 3, coin: 3, hit: 2, tap: 2 };
+const POOL_SIZE: Partial<Record<SoundName, number>> = { xpTick: 3, coin: 3, hit: 2, tap: 2, statUp: 2 };
 
 const players = new Map<SoundName, { list: AudioPlayer[]; next: number }>();
 let ambience: AudioPlayer | null = null;
@@ -65,8 +65,18 @@ function playerFor(name: SoundName): AudioPlayer | null {
   return player;
 }
 
+/**
+ * Browsers reject audio before the first tap or key press, and expo-audio's
+ * web player does not catch that rejection, so skip until the page is active.
+ */
+function blockedByAutoplay(): boolean {
+  if (process.env.EXPO_OS !== 'web' || typeof navigator === 'undefined') return false;
+  const activation = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
+  return activation ? !activation.hasBeenActive : false;
+}
+
 export function play(name: SoundName, volume = 1) {
-  if (!useGame.getState().settings.sound) return;
+  if (!useGame.getState().settings.sound || blockedByAutoplay()) return;
   const player = playerFor(name);
   if (!player) return;
   try {

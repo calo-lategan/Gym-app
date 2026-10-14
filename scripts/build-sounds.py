@@ -303,6 +303,33 @@ def s_dragon_roar():
     return normalize(mix(roar, place(fire, 0.6, 3.0) * 0.5), 0.95)
 
 
+def brass(freq, duration, attack=0.03):
+    """Detuned saw section whose brightness follows the swell, like a brass stab."""
+    n = int(SR * duration)
+    ramp = np.clip(np.arange(n) / (SR * 0.25), 0, 1)
+    vibrato = 1 + 0.004 * np.sin(2 * np.pi * 5.5 * np.arange(n) / SR) * ramp
+    x = mix(*[osc(freq * vibrato, duration, 'saw', detune=d) for d in (-0.003, 0.0, 0.003)])
+    e = env(n, attack, 0.15, 0.75, 0.25, hold=duration * 0.5)
+    return (filt(x, high=900) * 0.6 + filt(x, high=3800) * 0.4 * e) * e
+
+
+def s_victory():
+    total = 2.6
+    pickup = mix(*[place(brass(note(n), 0.16, 0.01), at, total) for n, at in [('G4', 0.0), ('G4', 0.14)]])
+    chord = mix(*[place(brass(note(n), 1.5), 0.3, total) for n in ['C4', 'G4', 'C5', 'E5']])
+    timpani = place(osc(np.linspace(110, 70, int(SR * 0.9)), 0.9) * env(int(SR * 0.9), 0.003, 0.85), 0.3, total)
+    sparkle = place(shimmer_chord(['C5', 'E5', 'G5'], 1.6, ['G6', 'C7', 'E7', 'G7'], 1.3), 0.34, total)
+    out = mix(pickup * 0.3, chord * 0.32, timpani * 0.9, place(s_hit() * 0.5, 0.3, total), sparkle * 0.7)
+    return normalize(reverb(out, 1.6, 0.3), 0.95)
+
+
+def s_stat_up():
+    total = 0.6
+    blips = mix(*[place(filt(osc(note(n), 0.09, 'square'), high=6000) * env(int(SR * 0.09), 0.002, 0.08), i * 0.055, total) for i, n in enumerate(['C5', 'G5', 'C6'])])
+    ring = place(bell(note('G6'), 0.45) * 0.5, 0.15, total)
+    return normalize(reverb(mix(blips * 0.6, ring, place(s_hit() * 0.35, 0.12, total)), 0.6, 0.2), 0.8)
+
+
 def s_ambience():
     """Seamless 24 second dungeon ambience: low drone, air and distant drips."""
     d = 24.0
@@ -344,6 +371,8 @@ SOUNDS = {
     'gate-open': s_gate_open,
     'streak': s_streak,
     'dragon-roar': s_dragon_roar,
+    'victory': s_victory,
+    'stat-up': s_stat_up,
     'ambience-dungeon': s_ambience,
 }
 
@@ -366,7 +395,11 @@ def write_mp3(name, samples):
 
 
 if __name__ == '__main__':
+    import sys
+    only = set(sys.argv[1:])
     for name, fn in SOUNDS.items():
+        if only and name not in only:
+            continue
         x = fn()
         if not name.startswith('ambience'):
             x = fade(x, 4)

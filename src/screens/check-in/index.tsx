@@ -87,10 +87,11 @@ export function CheckInScreen() {
     () => previewDay({ location: mode === 'home' ? 'home' : 'gym', recovery: mode === 'recovery', readiness: { input, result }, applyAdjustments: true }),
     [input, result, mode],
   );
+  const [openedAt] = useState(() => Date.now());
   const warnings = useMemo(() => {
     const plan = mode === 'recovery' ? recoveryDay() : todaysProgramDay();
-    return plan ? assessPlan(plan, sessions, today, Date.now()) : [];
-  }, [mode, sessions, today]);
+    return plan ? assessPlan(plan, sessions, today, openedAt) : [];
+  }, [mode, sessions, today, openedAt]);
   const targets = recoveryTargets(bodyweight, focus, mode !== 'recovery');
 
   const set = <K extends keyof ReadinessInput>(key: K, value: ReadinessInput[K]) => setInput((i) => ({ ...i, [key]: value }));
@@ -129,7 +130,7 @@ export function CheckInScreen() {
       <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, paddingBottom: spacing.xxl }} contentInsetAdjustmentBehavior="automatic">
         <View style={{ gap: spacing.xs }}>
           <Text variant="display">How is your body today?</Text>
-          <Text variant="subhead">Thirty seconds. It tunes today's session so you can train hard without digging a recovery hole.</Text>
+          <Text variant="subhead">Thirty seconds. It tunes today&apos;s session so you can train hard without digging a recovery hole.</Text>
         </View>
 
         <View style={{ gap: spacing.md }}>

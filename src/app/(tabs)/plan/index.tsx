@@ -1,13 +1,12 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
 
-import { Text } from '@/components/text';
+import { PlanScreen } from '@/screens/plan';
 
-export default function Placeholder() {
+export default function PlanRoute() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Stack.Screen options={{ title: 'Plan' }} />
-      <Text variant="title">Plan</Text>
-    </View>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <PlanScreen />
+    </>
   );
 }

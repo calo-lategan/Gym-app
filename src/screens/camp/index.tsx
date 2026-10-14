@@ -122,7 +122,7 @@ export function CampScreen() {
             ) : status.doneToday ? (
               <>
                 <Text variant="title">Quest complete</Text>
-                <Text variant="subhead">Today's work is banked. Recover well, the dungeon will wait.</Text>
+                <Text variant="subhead">Today&apos;s work is banked. Recover well, the dungeon will wait.</Text>
                 <View style={{ flexDirection: 'row', gap: spacing.sm }}>
                   <Button title="See rewards" icon="gift" variant="secondary" style={{ flex: 1 }} onPress={() => router.push('/victory')} />
                   <Button title="Bonus round" icon="plus" variant="ghost" style={{ flex: 1 }} onPress={() => router.push('/check-in?mode=gym')} />

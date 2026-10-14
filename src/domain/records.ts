@@ -1,5 +1,5 @@
-import { estimateOneRepMax } from './strength';
-import type { DayKey, Exercise, SetLog } from './types';
+import { estimateOneRepMax, formatWeight } from './strength';
+import type { DayKey, Exercise, SetLog, WeightUnit } from './types';
 
 export interface ExerciseRecord {
   exerciseId: string;
@@ -164,6 +164,22 @@ export const PR_LABELS: Record<PrKind, string> = {
   hold: 'Longest hold',
   speed: 'Fastest set',
 };
+
+/** One-line description of what a record was set at, for reward screens. */
+export function prSummary(pr: PrEvent, unit: WeightUnit): string {
+  switch (pr.kind) {
+    case 'weight':
+      return `${formatWeight(pr.value, unit)} for ${pr.reps} ${pr.reps === 1 ? 'rep' : 'reps'}`;
+    case 'e1rm':
+      return `Estimated max ${formatWeight(pr.value, unit)}, up from ${formatWeight(pr.previous, unit)}`;
+    case 'reps':
+      return pr.weight > 0 ? `${pr.value} reps at ${formatWeight(pr.weight, unit)}, up from ${pr.previous}` : `${pr.value} reps, up from ${pr.previous}`;
+    case 'hold':
+      return `${pr.value} s hold, up from ${pr.previous} s`;
+    case 'speed':
+      return `${pr.reps} reps in ${Math.round(pr.value)} s, down from ${Math.round(pr.previous)} s`;
+  }
+}
 
 /** Keep the strongest PR of each kind per exercise. */
 export function dedupePrs(events: readonly PrEvent[]): PrEvent[] {

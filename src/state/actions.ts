@@ -606,6 +606,7 @@ export function finishWorkout(): StoredOutcome | null {
     gold: outcome.gold,
     statGains: outcome.statGains,
     levelBefore: outcome.levelBefore,
+    xpBefore: state.hero.xp,
     levelAfter: outcome.state.hero.level,
     levelsGained: outcome.levelsGained,
     prs: outcome.prs,

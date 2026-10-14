@@ -138,7 +138,9 @@ export function Character({
   const mixer = useMemo(() => new THREE.AnimationMixer(root), [root]);
   const base = useRef<THREE.AnimationAction | null>(null);
   const endCallback = useRef(onOneShotEnd);
-  endCallback.current = onOneShotEnd;
+  useEffect(() => {
+    endCallback.current = onOneShotEnd;
+  });
 
   const clipByName = (name: string) => clips.find((c) => c.name === name);
 

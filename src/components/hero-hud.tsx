@@ -63,11 +63,10 @@ export function HeroHud({ hero }: { hero: Hero }) {
           ) : null}
         </View>
         <ProgressBar value={hero.xp / need} accessibilityLabel={`Experience ${hero.xp} of ${need}`} />
-        <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'center' }}>
-          <Text variant="caption" style={{ fontVariant: ['tabular-nums'] }}>
-            {hero.xp} / {need} XP
+        <View style={{ flexDirection: 'row', gap: spacing.ms, alignItems: 'center' }}>
+          <Text variant="caption" numberOfLines={1} style={{ flex: 1, fontVariant: ['tabular-nums'] }}>
+            {hero.xp}/{need} XP
           </Text>
-          <View style={{ flex: 1 }} />
           <Counter icon="camp" value={hero.streak.current} color={colors.ember} label="Streak" />
           <Counter icon="coin" value={hero.gold} color={colors.torch} label="Gold" />
         </View>

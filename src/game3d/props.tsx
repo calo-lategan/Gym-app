@@ -1,6 +1,8 @@
 import { useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
+
+import { createRng } from '@/domain/rng';
 
 import { MODELS } from './assets';
 import { Embers, getGlowTexture, Glow, TorchLight } from './effects';
@@ -80,19 +82,24 @@ export function Chest({
     return { object: clone, lid: lidNode as THREE.Object3D | null };
   }, [pieces, gold]);
   const angle = useRef(0);
+  const lidRef = useRef<THREE.Object3D | null>(null);
+  useEffect(() => {
+    lidRef.current = lid;
+  }, [lid]);
   useFrame((_, delta) => {
-    if (!lid) return;
+    const node = lidRef.current;
+    if (!node) return;
     const target = open ? -1.9 : 0;
     angle.current += (target - angle.current) * Math.min(1, delta * 6);
-    lid.rotation.x = angle.current;
+    node.rotation.x = angle.current;
   });
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
       <primitive object={object} />
       {open && glowColor ? (
         <>
-          <Glow position={[0, 1.1, 0]} color={glowColor} size={3.2} opacity={0.8} />
-          <pointLight position={[0, 1.6, 0.4]} color={glowColor} intensity={24} distance={7} decay={1.6} />
+          <Glow position={[0, 1.1, 0]} color={glowColor} size={2.6} opacity={0.55} />
+          <pointLight position={[0, 1.6, 0.6]} color={glowColor} intensity={9} distance={6} decay={1.6} />
         </>
       ) : null}
     </group>
@@ -114,10 +121,11 @@ export function LootBeam({ position, color, height = 9 }: { position: [number, n
   }, [color]);
   const ref = useRef<THREE.Mesh>(null);
   useFrame(({ clock }) => {
-    if (!ref.current) return;
+    const beam = ref.current;
+    if (!beam) return;
     const t = clock.elapsedTime;
-    ref.current.rotation.y = t * 0.8;
-    material.opacity = 0.28 + 0.1 * Math.sin(t * 4);
+    beam.rotation.y = t * 0.8;
+    (beam.material as THREE.MeshBasicMaterial).opacity = 0.28 + 0.1 * Math.sin(t * 4);
   });
   return (
     <group position={position}>
@@ -133,34 +141,31 @@ export function LootBeam({ position, color, height = 9 }: { position: [number, n
 /** Coins that burst out of a point and rain back down. Restart by changing `burstKey`. */
 export function CoinBurst({ position, count = 24, burstKey }: { position: [number, number, number]; count?: number; burstKey: number }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
-  const state = useMemo(() => {
-    let seed = burstKey * 7919 + 13;
-    const rand = () => {
-      seed = (seed * 16807) % 2147483647;
-      return seed / 2147483647;
-    };
-    return Array.from({ length: count }, () => ({
-      v: new THREE.Vector3((rand() - 0.5) * 4.5, 5 + rand() * 4, (rand() - 0.5) * 3 + 1.5),
-      p: new THREE.Vector3(0, 0.8, 0),
-      spin: rand() * 10,
-    }));
-  }, [count, burstKey]);
+  const coins = useRef<{ v: THREE.Vector3; p: THREE.Vector3; spin: number }[]>([]);
+  const dummy = useRef<THREE.Object3D | null>(null);
   const material = useMemo(
     () => new THREE.MeshLambertMaterial({ color: '#ffcf4a', emissive: new THREE.Color('#a86a00'), emissiveIntensity: 0.6 }),
     [],
   );
-  const dummy = useMemo(() => new THREE.Object3D(), []);
   const started = useRef(0);
   const lastKey = useRef(-1);
   useFrame(({ clock }, delta) => {
-    if (!mesh.current) return;
+    const instances = mesh.current;
+    if (!instances) return;
     if (lastKey.current !== burstKey) {
       lastKey.current = burstKey;
       started.current = clock.elapsedTime;
-      state.forEach((c) => c.p.set(0, 0.8, 0));
+      const rand = createRng(burstKey * 7919 + 13);
+      coins.current = Array.from({ length: count }, () => ({
+        v: new THREE.Vector3((rand() - 0.5) * 4.5, 5 + rand() * 4, (rand() - 0.5) * 3 + 1.5),
+        p: new THREE.Vector3(0, 0.8, 0),
+        spin: rand() * 10,
+      }));
     }
+    dummy.current ??= new THREE.Object3D();
+    const d = dummy.current;
     const age = clock.elapsedTime - started.current;
-    state.forEach((c, i) => {
+    coins.current.forEach((c, i) => {
       if (age < 2.6) {
         c.v.y -= 14 * delta;
         c.p.addScaledVector(c.v, delta);
@@ -171,13 +176,14 @@ export function CoinBurst({ position, count = 24, burstKey }: { position: [numbe
           c.v.z *= 0.7;
         }
       }
-      dummy.position.copy(c.p);
-      dummy.rotation.set(c.spin + age * 8, age * 5, 0);
-      dummy.scale.setScalar(age < 3.2 ? 1 : Math.max(0, 1 - (age - 3.2) * 2));
-      dummy.updateMatrix();
-      mesh.current!.setMatrixAt(i, dummy.matrix);
+      d.position.copy(c.p);
+      d.rotation.set(c.spin + age * 8, age * 5, 0);
+      // Before the first burst every coin is scaled to nothing.
+      d.scale.setScalar(burstKey === 0 ? 0 : age < 3.2 ? 1 : Math.max(0, 1 - (age - 3.2) * 2));
+      d.updateMatrix();
+      instances.setMatrixAt(i, d.matrix);
     });
-    mesh.current.instanceMatrix.needsUpdate = true;
+    instances.instanceMatrix.needsUpdate = true;
   });
   return (
     <group position={position}>
@@ -205,15 +211,16 @@ export function ShockRing({ position, color = '#ffc566', ringKey }: { position: 
   const started = useRef<number | null>(null);
   const last = useRef(-1);
   useFrame(({ clock }) => {
-    if (!ref.current) return;
+    const ring = ref.current;
+    if (!ring) return;
     if (last.current !== ringKey) {
       last.current = ringKey;
       started.current = clock.elapsedTime;
     }
     const age = started.current === null ? 99 : clock.elapsedTime - started.current;
     const s = 0.5 + age * 9;
-    ref.current.scale.set(s, s, 1);
-    material.opacity = Math.max(0, 1 - age * 1.1);
+    ring.scale.set(s, s, 1);
+    (ring.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 1 - age * 1.1);
   });
   return (
     <mesh ref={ref} position={position} rotation={[-Math.PI / 2, 0, 0]} material={material}>

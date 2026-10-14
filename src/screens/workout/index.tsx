@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, IconButton } from '@/components/button';
 import { Icon } from '@/components/icon';
-import { Panel } from '@/components/panel';
 import { ProgressBar } from '@/components/progress-bar';
 import { Stepper } from '@/components/stepper';
 import { Text } from '@/components/text';
@@ -51,7 +50,7 @@ interface Floater {
 }
 
 export function WorkoutScreen() {
-  useKeepAwake();
+  useKeepAwake(undefined, { suppressDeactivateWarnings: true });
   const insets = useSafeAreaInsets();
   const active = useGame((s) => s.active);
   const hero = useGame((s) => s.hero);
@@ -59,7 +58,7 @@ export function WorkoutScreen() {
   const unit = useGame((s) => s.profile.unit);
   const records = useGame((s) => s.records);
   const graphics = useGame((s) => s.settings.graphics);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   const [floaters, setFloaters] = useState<Floater[]>([]);
   const [prBanner, setPrBanner] = useState<PrEvent[] | null>(null);
   const [strike, setStrike] = useState({ key: 0, crit: false });
@@ -266,11 +265,13 @@ export function WorkoutScreen() {
           </View>
           <ProgressBar value={hp} tone="hp" height={8} durationMs={350} accessibilityLabel={`${monsterName} health`} />
         </View>
-        {floaters.map((f) => (
-          <Animated.View key={f.id} entering={ZoomIn.duration(180)} exiting={FadeOutUp.duration(500)} pointerEvents="none" style={{ position: 'absolute', right: '22%', top: '38%' }}>
-            <Text style={{ fontFamily: fonts.display, fontSize: 26, color: f.color, textShadowColor: '#000', textShadowRadius: 8 }}>{f.text}</Text>
-          </Animated.View>
-        ))}
+        <View pointerEvents="none" style={{ position: 'absolute', right: '10%', top: '26%', alignItems: 'flex-end', gap: 2 }}>
+          {floaters.map((f) => (
+            <Animated.View key={f.id} entering={ZoomIn.duration(180)} exiting={FadeOutUp.duration(500)}>
+              <Text style={{ fontFamily: fonts.display, fontSize: 26, lineHeight: 30, color: f.color, textShadowColor: '#000', textShadowRadius: 8 }}>{f.text}</Text>
+            </Animated.View>
+          ))}
+        </View>
       </View>
 
       {/* Exercise strip */}

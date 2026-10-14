@@ -1,5 +1,5 @@
 import { getExercise } from './exercises';
-import { applySet, dedupePrs, detectPrs, prsForNewSet, type ExerciseRecord } from './records';
+import { applySet, dedupePrs, detectPrs, prSummary, prsForNewSet, type ExerciseRecord } from './records';
 import type { SetLog } from './types';
 
 let n = 0;
@@ -82,5 +82,17 @@ describe('dedupePrs', () => {
     const weight = dedupePrs(events).filter((e) => e.kind === 'weight');
     expect(weight).toHaveLength(1);
     expect(weight[0].value).toBe(65);
+  });
+});
+
+describe('prSummary', () => {
+  const base = { exerciseId: 'bench_press', setId: 'x', weight: 80, reps: 5, previous: 0 };
+  it('describes each record kind in the lifter\'s unit', () => {
+    expect(prSummary({ ...base, kind: 'weight', value: 82.5, previous: 80 }, 'kg')).toBe('82.5 kg for 5 reps');
+    expect(prSummary({ ...base, kind: 'reps', value: 8, previous: 6 }, 'kg')).toBe('8 reps at 80 kg, up from 6');
+    expect(prSummary({ ...base, kind: 'reps', weight: 0, value: 21, previous: 18 }, 'kg')).toBe('21 reps, up from 18');
+    expect(prSummary({ ...base, kind: 'hold', value: 75, previous: 60 }, 'kg')).toBe('75 s hold, up from 60 s');
+    expect(prSummary({ ...base, kind: 'speed', value: 18.4, previous: 22.1 }, 'kg')).toBe('5 reps in 18 s, down from 22 s');
+    expect(prSummary({ ...base, kind: 'e1rm', value: 100, previous: 95 }, 'lb')).toBe('Estimated max 220 lb, up from 209 lb');
   });
 });

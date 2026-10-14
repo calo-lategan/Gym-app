@@ -99,6 +99,39 @@ export function plannedSets(day: ProgramDay): Record<MuscleGroup, number> {
 }
 
 /** Volume load in kg×reps, counting a share of body weight for body weight work. */
+/** Projected hard sets per muscle for one week of the program cycle. */
+export function weeklyPlanSets(days: readonly ProgramDay[], sessionsPerWeek: number): Record<MuscleGroup, number> {
+  const totals = emptyMuscles();
+  if (days.length === 0) return totals;
+  for (let i = 0; i < sessionsPerWeek; i++) {
+    const planned = plannedSets(days[i % days.length]);
+    for (const m of Object.keys(totals) as MuscleGroup[]) totals[m] += planned[m];
+  }
+  return totals;
+}
+
+const PUSH_PATTERNS = new Set(['h_push', 'v_push', 'chest_fly', 'elbow_ext', 'lateral_raise']);
+const PULL_PATTERNS = new Set(['h_pull', 'v_pull', 'rear_delt', 'elbow_flex']);
+
+/**
+ * Upper body push and pull sets in a week of the plan. Keeping pulling at
+ * least level with pushing protects the shoulders.
+ */
+export function pushPullBalance(days: readonly ProgramDay[], sessionsPerWeek: number): { push: number; pull: number } {
+  let push = 0;
+  let pull = 0;
+  if (days.length === 0) return { push, pull };
+  for (let i = 0; i < sessionsPerWeek; i++) {
+    for (const planned of days[i % days.length].exercises) {
+      const exercise = findExercise(planned.exerciseId);
+      if (!exercise) continue;
+      if (PUSH_PATTERNS.has(exercise.pattern)) push += planned.sets;
+      if (PULL_PATTERNS.has(exercise.pattern)) pull += planned.sets;
+    }
+  }
+  return { push, pull };
+}
+
 export function sessionLoad(session: WorkoutSession): number {
   let load = 0;
   for (const ex of session.exercises) {
