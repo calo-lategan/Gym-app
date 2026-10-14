@@ -1,9 +1,4 @@
-import {
-  GrenzeGotisch_600SemiBold,
-  GrenzeGotisch_700Bold,
-  GrenzeGotisch_800ExtraBold,
-  useFonts,
-} from '@expo-google-fonts/grenze-gotisch';
+import { GrenzeGotisch_600SemiBold, GrenzeGotisch_700Bold, GrenzeGotisch_800ExtraBold, useFonts } from '@expo-google-fonts/grenze-gotisch';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -75,6 +70,7 @@ export default function RootLayout() {
             <Stack.Screen name="item/[id]" options={sheetOptions([0.55])} />
             <Stack.Screen name="settings" options={{ title: 'Settings' }} />
             <Stack.Screen name="science" options={{ title: 'The science' }} />
+            <Stack.Screen name="privacy" options={{ title: 'Privacy' }} />
             <Stack.Screen name="history" options={{ title: 'Battle log' }} />
             <Stack.Screen name="records" options={{ title: 'Records' }} />
             <Stack.Screen name="shop" options={{ title: 'Merchant' }} />

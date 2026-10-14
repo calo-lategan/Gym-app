@@ -39,3 +39,29 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## This project: Ironwyrm
+
+A gamified gym tracker: real training logic underneath, a 3D dungeon crawler on top. Read `README.md` for the feature tour.
+
+### Where things go
+
+- `src/domain/` is pure TypeScript with Jest tests. All training science and game rules live here (`domain/game/balance.ts` holds every tunable number). Add a test with every rule change.
+- `src/state/actions.ts` is the only place that changes stores. Screens call actions; they never call `setState` on a store directly.
+- `src/screens/<name>/index.tsx` holds each screen; `src/app/` route files only render a screen.
+- `src/game3d/` is React Three Fiber. The React Compiler is on, so mutate three.js objects through refs inside `useFrame` (never values returned by `useMemo`), and react to bumped "key" props by comparing against stored state during render instead of calling `setState` in an effect.
+- Shared UI in `src/components/`; design tokens in `src/theme/`.
+
+### Conventions
+
+- UI copy: sentence case, no emoji, no em dashes, no arrows appended to button labels.
+- Use theme tokens for colour, spacing, radius and type. Touch targets are at least 48dp.
+- Every reward moment pairs a sound (`services/sound.ts`), a haptic and a visual.
+- Nested `entering` animations do not play on web while their parent is entering. Reveal children over time by mounting them later (see `useStagger` in the victory screen).
+- Formatting is Prettier (`npm run format`); `npm run check` must pass before committing.
+
+### Verifying changes
+
+- `npm run check` for types, lint, format and unit tests.
+- `npm run test:e2e` exports the web build and runs Playwright at phone size (SwiftShader WebGL renders the 3D scenes headless).
+- Android-specific behaviour (notifications, haptics, native pickers) needs a development build on a device.

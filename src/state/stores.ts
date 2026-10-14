@@ -9,19 +9,7 @@ import type { DungeonEvent } from '@/domain/game/dungeon';
 import type { LootDrop, XpBreakdown } from '@/domain/game/rewards';
 import type { ExerciseRecord, PrEvent } from '@/domain/records';
 import { defaultSchedule } from '@/domain/schedule';
-import type {
-  CheckIn,
-  DayKey,
-  DragonState,
-  DungeonState,
-  Hero,
-  Profile,
-  Program,
-  Schedule,
-  Stats,
-  WeighIn,
-  WorkoutSession,
-} from '@/domain/types';
+import type { CheckIn, DayKey, DragonState, DungeonState, Hero, Profile, Program, Schedule, Stats, WeighIn, WorkoutSession } from '@/domain/types';
 
 export interface Settings {
   sound: boolean;

@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { FlatList, Pressable, TextInput, View } from 'react-native';
 
@@ -10,6 +10,7 @@ import { EXERCISES, isAvailable } from '@/domain/exercises';
 import { MUSCLE_LABELS } from '@/domain/science';
 import { describeEquipment } from '@/domain/substitution';
 import type { Exercise, MuscleGroup } from '@/domain/types';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { addExerciseToWorkout, addToDay } from '@/state/actions';
@@ -32,10 +33,7 @@ export function ExercisePickerScreen() {
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
     return EXERCISES.filter(
-      (e) =>
-        (!q || e.name.toLowerCase().includes(q)) &&
-        (!muscle || e.primary.includes(muscle)) &&
-        (showAll || isAvailable(e, equipment)),
+      (e) => (!q || e.name.toLowerCase().includes(q)) && (!muscle || e.primary.includes(muscle)) && (showAll || isAvailable(e, equipment)),
     ).sort((a, b) => Number(isAvailable(b, equipment)) - Number(isAvailable(a, equipment)) || a.name.localeCompare(b.name));
   }, [query, muscle, showAll, equipment]);
 
@@ -44,7 +42,7 @@ export function ExercisePickerScreen() {
     else addExerciseToWorkout(exercise.id);
     play('setStart', 0.6);
     haptics.success();
-    router.back();
+    goBack('/plan');
   };
 
   return (
@@ -57,7 +55,19 @@ export function ExercisePickerScreen() {
       ListHeaderComponent={
         <View style={{ gap: spacing.ms, marginBottom: spacing.sm }}>
           <Text variant="title">Add an exercise</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, minHeight: 50, paddingHorizontal: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.seam, backgroundColor: colors.slate }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.sm,
+              minHeight: 50,
+              paddingHorizontal: spacing.md,
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.seam,
+              backgroundColor: colors.slate,
+            }}
+          >
             <Icon name="list" size={18} color={colors.dim} />
             <TextInput
               value={query}
@@ -78,7 +88,12 @@ export function ExercisePickerScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: spacing.sm }}
             renderItem={({ item }) => (
-              <Chip label={item ? MUSCLE_LABELS[item] : 'All'} selected={muscle === item} onPress={() => setMuscle(item)} testID={`muscle-${item ?? 'all'}`} />
+              <Chip
+                label={item ? MUSCLE_LABELS[item] : 'All'}
+                selected={muscle === item}
+                onPress={() => setMuscle(item)}
+                testID={`muscle-${item ?? 'all'}`}
+              />
             )}
           />
           <ToggleRow label="Include exercises I lack the kit for" value={showAll} onValueChange={setShowAll} />
@@ -109,7 +124,12 @@ export function ExercisePickerScreen() {
             <View style={{ flex: 1, gap: 2 }}>
               <Text variant="bodyStrong">{item.name}</Text>
               <Text variant="caption">
-                {item.primary.map((m) => MUSCLE_LABELS[m]).join(', ')}. {available ? (item.equipment.length ? `Uses ${describeEquipment(item.equipment)}.` : 'No equipment.') : `Needs ${describeEquipment(item.equipment)}.`}
+                {item.primary.map((m) => MUSCLE_LABELS[m]).join(', ')}.{' '}
+                {available
+                  ? item.equipment.length
+                    ? `Uses ${describeEquipment(item.equipment)}.`
+                    : 'No equipment.'
+                  : `Needs ${describeEquipment(item.equipment)}.`}
               </Text>
             </View>
             <Icon name="plus" size={20} color={available ? colors.torch : colors.dim} />

@@ -81,31 +81,18 @@ const SLOT_STAT: Record<Exclude<GearSlot, 'relic'>, StatKey[]> = {
 
 function bonusFor(rng: Rng, slot: GearSlot, rarity: Rarity): ItemBonus {
   if (slot === 'relic') {
-    return rng() < 0.6
-      ? { xpPct: BALANCE.loot.xpPct[rarity] }
-      : { goldPct: BALANCE.loot.goldPct[rarity] };
+    return rng() < 0.6 ? { xpPct: BALANCE.loot.xpPct[rarity] } : { goldPct: BALANCE.loot.goldPct[rarity] };
   }
   return { stat: pick(rng, SLOT_STAT[slot]), amount: BALANCE.loot.statBonus[rarity] };
 }
 
-export function generateItem(
-  rng: Rng,
-  rarity: Rarity,
-  heroClass: HeroClass,
-  floor: number,
-  day: DayKey,
-  source: string,
-  slot?: GearSlot,
-): Item {
+export function generateItem(rng: Rng, rarity: Rarity, heroClass: HeroClass, floor: number, day: DayKey, source: string, slot?: GearSlot): Item {
   const chosenSlot = slot ?? weighted(rng, BALANCE.loot.slotWeights);
   const [lo, hi] = BALANCE.loot.powerRange[rarity];
   const power = intBetween(rng, lo, hi) + Math.floor(Math.max(0, floor - 1) / 5);
   const base =
-    chosenSlot === 'weapon'
-      ? WEAPON_BASES[heroClass][rarityRank(rarity) >= rarityRank('rare') ? 1 : 0]
-      : pick(rng, SLOT_BASES[chosenSlot]);
-  const name =
-    rarity === 'legendary' ? `${base} ${pick(rng, LEGENDARY_SUFFIXES)}` : `${pick(rng, PREFIXES[rarity])} ${base}`;
+    chosenSlot === 'weapon' ? WEAPON_BASES[heroClass][rarityRank(rarity) >= rarityRank('rare') ? 1 : 0] : pick(rng, SLOT_BASES[chosenSlot]);
+  const name = rarity === 'legendary' ? `${base} ${pick(rng, LEGENDARY_SUFFIXES)}` : `${pick(rng, PREFIXES[rarity])} ${base}`;
   return {
     id: uid('item_'),
     name,

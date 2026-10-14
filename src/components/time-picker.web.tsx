@@ -10,7 +10,15 @@ export function TimePicker({ value, onChange, use24h = false, testID }: TimePick
   const hourLabel = (h: number) => (use24h ? String(h).padStart(2, '0') : `${h % 12 === 0 ? 12 : h % 12} ${h < 12 ? 'am' : 'pm'}`);
   return (
     <View testID={testID} style={{ gap: spacing.sm }}>
-      <Stepper label="Hour" value={value.hour} min={0} max={23} onChange={(hour) => onChange({ ...value, hour })} format={hourLabel} testID={testID ? `${testID}-hour` : undefined} />
+      <Stepper
+        label="Hour"
+        value={value.hour}
+        min={0}
+        max={23}
+        onChange={(hour) => onChange({ ...value, hour })}
+        format={hourLabel}
+        testID={testID ? `${testID}-hour` : undefined}
+      />
       <Stepper
         label="Minute"
         value={value.minute}

@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -12,6 +11,7 @@ import { Text } from '@/components/text';
 import { dayKeyOf, parseDayKey } from '@/domain/dates';
 import { assessWeightRate, averageWeight, goalDirection, weeklyWeightChangePct } from '@/domain/science';
 import { displayWeightValue, formatWeight, fromDisplayWeight } from '@/domain/strength';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { latestBodyweight, logWeighIn } from '@/state/actions';
@@ -77,7 +77,7 @@ export function WeighInScreen() {
             </Text>
           </Animated.View>
         ))}
-        <Button title="Done" size="lg" onPress={() => router.back()} testID="weigh-in-done" />
+        <Button title="Done" size="lg" onPress={() => goBack('/')} testID="weigh-in-done" />
       </PageScroll>
     );
   }
@@ -88,7 +88,16 @@ export function WeighInScreen() {
         <Text variant="title">Weigh in</Text>
         <Text variant="subhead">Same time each morning, before food. Only your 7 day average counts, so daily swings never matter.</Text>
       </View>
-      <Stepper label={`Body weight (${unit})`} value={value} step={step} min={30} max={unit === 'kg' ? 300 : 660} format={(v) => v.toFixed(1)} onChange={setValue} testID="weigh-in-value" />
+      <Stepper
+        label={`Body weight (${unit})`}
+        value={value}
+        step={step}
+        min={30}
+        max={unit === 'kg' ? 300 : 660}
+        format={(v) => v.toFixed(1)}
+        onChange={setValue}
+        testID="weigh-in-value"
+      />
       <Button title="Log weight" icon="check" size="lg" onPress={save} testID="weigh-in-save" sound={null} />
       {avg !== null ? (
         <Text variant="caption">
@@ -107,7 +116,9 @@ export function WeighInScreen() {
           <Text variant="label">Recent</Text>
           {recent.map((w) => (
             <View key={w.at} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text variant="caption">{parseDayKey(w.dayKey).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}</Text>
+              <Text variant="caption">
+                {parseDayKey(w.dayKey).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+              </Text>
               <Text variant="caption" color={colors.bone}>
                 {formatWeight(w.kg, unit)}
               </Text>

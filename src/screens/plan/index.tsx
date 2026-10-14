@@ -40,13 +40,37 @@ function VolumeBars({ totals }: { totals: Record<MuscleGroup, number> }) {
         const value = Math.round(totals[m] * 2) / 2;
         const tone = value > mrv ? colors.ember : value >= mev ? colors.verdant : colors.torch;
         return (
-          <View key={m} accessible accessibilityLabel={`${MUSCLE_LABELS[m]}: ${value} sets a week. Growth window ${mev} to ${mrv}.`} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <View
+            key={m}
+            accessible
+            accessibilityLabel={`${MUSCLE_LABELS[m]}: ${value} sets a week. Growth window ${mev} to ${mrv}.`}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+          >
             <Text variant="caption" style={{ width: 84 }} numberOfLines={1}>
               {MUSCLE_LABELS[m]}
             </Text>
-            <View style={{ flex: 1, height: 12, borderRadius: radius.full, backgroundColor: 'rgba(0,0,0,0.35)', borderWidth: 1, borderColor: colors.seam, overflow: 'hidden' }}>
+            <View
+              style={{
+                flex: 1,
+                height: 12,
+                borderRadius: radius.full,
+                backgroundColor: 'rgba(0,0,0,0.35)',
+                borderWidth: 1,
+                borderColor: colors.seam,
+                overflow: 'hidden',
+              }}
+            >
               {/* Growth window. */}
-              <View style={{ position: 'absolute', top: 0, bottom: 0, left: `${(mev / scale) * 100}%`, width: `${((Math.min(mrv, scale) - mev) / scale) * 100}%`, backgroundColor: 'rgba(102,212,156,0.14)' }} />
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: `${(mev / scale) * 100}%`,
+                  width: `${((Math.min(mrv, scale) - mev) / scale) * 100}%`,
+                  backgroundColor: 'rgba(102,212,156,0.14)',
+                }}
+              />
               <View style={{ width: `${Math.min(1, value / scale) * 100}%`, height: '100%', borderRadius: radius.full, backgroundColor: tone }} />
             </View>
             <Text variant="label" style={{ width: 28, textAlign: 'right', fontVariant: ['tabular-nums'] }} color={tone}>
@@ -83,13 +107,14 @@ export function PlanScreen() {
     [status.day, status.today, sessions, openedAt],
   );
 
-  const todayLine = status.override === 'rest'
-    ? 'Today is now a rest day. Your session moved to the next free day.'
-    : status.trainingDay
-      ? status.doneToday
-        ? 'Done for today. Well fought.'
-        : `${status.day?.name ?? 'Training'} at ${formatClock(status.time, use24h)}${status.override && status.override !== 'train' ? ', moved' : ''}.`
-      : 'Rest day. Recovery is where the strength is built.';
+  const todayLine =
+    status.override === 'rest'
+      ? 'Today is now a rest day. Your session moved to the next free day.'
+      : status.trainingDay
+        ? status.doneToday
+          ? 'Done for today. Well fought.'
+          : `${status.day?.name ?? 'Training'} at ${formatClock(status.time, use24h)}${status.override && status.override !== 'train' ? ', moved' : ''}.`
+        : 'Rest day. Recovery is where the strength is built.';
 
   const rebuild = () => {
     const go = () => regenerateProgram();
@@ -133,9 +158,23 @@ export function PlanScreen() {
             </Text>
           </View>
           {status.trainingDay && !status.doneToday ? (
-            <Button title="Move today's session" icon="clock" variant="secondary" size="md" onPress={() => router.push('/move-session')} testID="plan-move-session" />
+            <Button
+              title="Move today's session"
+              icon="clock"
+              variant="secondary"
+              size="md"
+              onPress={() => router.push('/move-session')}
+              testID="plan-move-session"
+            />
           ) : !status.trainingDay ? (
-            <Button title="Train today anyway" icon="swords" variant="secondary" size="md" onPress={() => router.push('/move-session')} testID="plan-train-today" />
+            <Button
+              title="Train today anyway"
+              icon="swords"
+              variant="secondary"
+              size="md"
+              onPress={() => router.push('/move-session')}
+              testID="plan-train-today"
+            />
           ) : null}
           <Divider />
           <TimePicker label="Gym time" value={schedule.reminderTime} onChange={setReminderTime} use24h={use24h} testID="plan-gym-time" />
@@ -166,12 +205,22 @@ export function PlanScreen() {
         </Section>
       ) : null}
 
-      <Section title="Your rotation" detail="Days run in order on your training days. Tap a day to edit it." action={<Button title="Rebuild" icon="refresh" variant="ghost" size="sm" onPress={rebuild} testID="plan-rebuild" />}>
+      <Section
+        title="Your rotation"
+        detail="Days run in order on your training days. Tap a day to edit it."
+        action={<Button title="Rebuild" icon="refresh" variant="ghost" size="sm" onPress={rebuild} testID="plan-rebuild" />}
+      >
         {days.map((day, i) => {
           const { sets, minutes } = daySummary(day);
           const next = i === nextDayIndex % Math.max(1, days.length);
           return (
-            <Panel key={day.id} onPress={() => router.push(`/plan/${day.id}`)} tone={next ? 'torch' : 'stone'} testID={`plan-day-card-${i}`} accessibilityLabel={`${day.name}, ${day.exercises.length} exercises${next ? ', next up' : ''}`}>
+            <Panel
+              key={day.id}
+              onPress={() => router.push(`/plan/${day.id}`)}
+              tone={next ? 'torch' : 'stone'}
+              testID={`plan-day-card-${i}`}
+              accessibilityLabel={`${day.name}, ${day.exercises.length} exercises${next ? ', next up' : ''}`}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
@@ -219,7 +268,13 @@ export function PlanScreen() {
       </Section>
 
       <Section title="Kit">
-        <Button title="Gym and home equipment" icon="equipment" variant="secondary" onPress={() => router.push('/settings')} testID="plan-equipment" />
+        <Button
+          title="Gym and home equipment"
+          icon="equipment"
+          variant="secondary"
+          onPress={() => router.push('/settings')}
+          testID="plan-equipment"
+        />
       </Section>
     </TabScreen>
   );

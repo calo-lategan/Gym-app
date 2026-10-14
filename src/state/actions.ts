@@ -4,15 +4,7 @@ import { canAttemptBoss, createBoss, refreshBossForWeek } from '@/domain/game/bo
 import { crossedPhases, goalProgress, newDragon } from '@/domain/game/dragon';
 import { appendJournal, journalEntry } from '@/domain/game/dungeon';
 import { generateItem } from '@/domain/game/loot';
-import {
-  addXp,
-  autoEquip,
-  buy,
-  equip,
-  newHero,
-  salvage,
-  type ShopItem,
-} from '@/domain/game/progression';
+import { addXp, autoEquip, buy, equip, newHero, salvage, type ShopItem } from '@/domain/game/progression';
 import { resolveWorkout } from '@/domain/game/rewards';
 import { settleStreak } from '@/domain/game/streak';
 import { resolveCheckIn, resolveWeighIn } from '@/domain/game/weighin';
@@ -43,15 +35,7 @@ import type {
   WorkoutSession,
 } from '@/domain/types';
 
-import {
-  initialGameState,
-  initialHistoryState,
-  useGame,
-  useHistory,
-  type ActiveWorkout,
-  type Settings,
-  type StoredOutcome,
-} from './stores';
+import { initialGameState, initialHistoryState, useGame, useHistory, type ActiveWorkout, type Settings, type StoredOutcome } from './stores';
 
 const today = () => dayKeyOf(new Date());
 
@@ -124,8 +108,7 @@ export function completeOnboarding(input: OnboardingInput) {
     daysPerWeek: Math.max(1, trainingDaysPerWeek(schedule)),
     equipment: input.gymEquipment,
   });
-  const start =
-    input.goal.kind === 'bodyweight' ? input.bodyweightKg : input.goal.kind === 'sessions' ? 0 : (input.goal.start ?? 0);
+  const start = input.goal.kind === 'bodyweight' ? input.bodyweightKg : input.goal.kind === 'sessions' ? 0 : (input.goal.start ?? 0);
   const goal: Goal = { kind: input.goal.kind, start, target: input.goal.target, exerciseId: input.goal.exerciseId, createdAt: now };
   const hero = {
     ...newHero(input.name.trim() || 'Hero', input.heroClass),
@@ -359,9 +342,7 @@ export function logSet(entry: { reps: number; weight: number; rpe?: number }): L
     rpe: entry.rpe,
     isBoss: isBoss || undefined,
   };
-  const earlier = active.session.exercises
-    .filter((e) => e.exerciseId === ex.exerciseId)
-    .flatMap((e) => e.sets);
+  const earlier = active.session.exercises.filter((e) => e.exerciseId === ex.exerciseId).flatMap((e) => e.sets);
   const prs = prsForNewSet(active.recordsAtStart[ex.exerciseId], earlier, set, exercise, active.session.dayKey);
 
   const exercises = active.session.exercises.map((e, i) => (i === index ? { ...e, sets: [...e.sets, set] } : e));
@@ -370,7 +351,8 @@ export function logSet(entry: { reps: number; weight: number; rpe?: number }): L
   const nextCurrent = exerciseDone ? nextIndexAfter(exercises, index) : index;
   const restSec = workoutDone ? 0 : ex.restSec;
   const bossDefeated =
-    isBoss && Boolean(active.session.bossAttempt) &&
+    isBoss &&
+    Boolean(active.session.bossAttempt) &&
     set.reps >= active.session.bossAttempt!.challenge.target &&
     set.weight >= active.session.bossAttempt!.challenge.weight - 0.01;
 
@@ -426,9 +408,7 @@ export function deleteSet(exerciseIndex: number, setId: string) {
     ...a,
     session: {
       ...a.session,
-      exercises: a.session.exercises.map((e, i) =>
-        i === exerciseIndex ? { ...e, sets: e.sets.filter((s) => s.id !== setId) } : e,
-      ),
+      exercises: a.session.exercises.map((e, i) => (i === exerciseIndex ? { ...e, sets: e.sets.filter((s) => s.id !== setId) } : e)),
     },
     livePrs: a.livePrs.filter((p) => p.setId !== setId),
   }));
@@ -451,11 +431,7 @@ export function adjustTargetSets(exerciseIndex: number, delta: number) {
  * is updated too, and any equipment the lifter said they lack is removed from
  * their equipment list so future plans avoid it.
  */
-export function swapExercise(
-  exerciseIndex: number,
-  newExerciseId: string,
-  options: { permanent?: boolean; missingEquipment?: EquipmentId[] } = {},
-) {
+export function swapExercise(exerciseIndex: number, newExerciseId: string, options: { permanent?: boolean; missingEquipment?: EquipmentId[] } = {}) {
   const state = useGame.getState();
   const active = state.active;
   if (!active) return;
@@ -561,7 +537,11 @@ export function finishWorkout(): StoredOutcome | null {
   const program = state.program;
 
   const outcome = resolveWorkout({
-    state: { hero: state.hero, dungeon: state.dungeon, dragon: state.dragon ?? newDragon({ kind: 'sessions', start: 0, target: 40, createdAt: now }) },
+    state: {
+      hero: state.hero,
+      dungeon: state.dungeon,
+      dragon: state.dragon ?? newDragon({ kind: 'sessions', start: 0, target: 40, createdAt: now }),
+    },
     session,
     prs,
     today: dayKey,
@@ -586,13 +566,15 @@ export function finishWorkout(): StoredOutcome | null {
     const lines = crossedPhases(dragon.bestProgress, after).map((p) => p.line);
     dragon = { ...dragon, bestProgress: Math.max(dragon.bestProgress, after) };
     dragonSummary = { before, after, lines };
-    if (lines.length) dungeon = appendJournal(dungeon, lines.map((l) => journalEntry(dayKey, 'dragon', l)));
+    if (lines.length)
+      dungeon = appendJournal(
+        dungeon,
+        lines.map((l) => journalEntry(dayKey, 'dragon', l)),
+      );
   }
 
   const nextDayIndex =
-    session.programDayId && session.kind === 'standard' && program
-      ? (state.nextDayIndex + 1) % program.days.length
-      : state.nextDayIndex;
+    session.programDayId && session.kind === 'standard' && program ? (state.nextDayIndex + 1) % program.days.length : state.nextDayIndex;
 
   const stored: StoredOutcome = {
     sessionId: session.id,
@@ -650,9 +632,7 @@ export function logWeighIn(kg: number) {
   const history = useHistory.getState();
   const day = today();
   const firstToday = !history.weighIns.some((w) => w.dayKey === day);
-  const weighIns = [...history.weighIns.filter((w) => w.dayKey !== day), { dayKey: day, kg, at: Date.now() }].sort(
-    (a, b) => a.at - b.at,
-  );
+  const weighIns = [...history.weighIns.filter((w) => w.dayKey !== day), { dayKey: day, kg, at: Date.now() }].sort((a, b) => a.at - b.at);
   useHistory.setState({ weighIns });
 
   if (!state.dragon) return null;
@@ -663,7 +643,11 @@ export function logWeighIn(kg: number) {
   if (outcome.newMilestones > 0) {
     dungeon = appendJournal(dungeon, [journalEntry(day, 'weight', `Body weight milestone reached. Vitality +${outcome.newMilestones}.`)]);
   }
-  if (lines.length) dungeon = appendJournal(dungeon, lines.map((l) => journalEntry(day, 'dragon', l)));
+  if (lines.length)
+    dungeon = appendJournal(
+      dungeon,
+      lines.map((l) => journalEntry(day, 'dragon', l)),
+    );
   useGame.setState({
     hero: outcome.hero,
     dungeon,
@@ -698,8 +682,7 @@ export function slayDragon(nextGoal: { kind: GoalKind; target: number; start?: n
   hero = autoEquip(hero, item).hero;
   const title = state.dragon.tier === 1 ? 'Dragonslayer' : `Slayer of ${state.dragon.name}`;
   hero = { ...hero, titles: [...new Set([...hero.titles, title])], activeTitle: title, gold: hero.gold + 500, weightMilestones: 0 };
-  const start =
-    nextGoal.kind === 'bodyweight' ? latestBodyweight() : nextGoal.kind === 'sessions' ? 0 : (nextGoal.start ?? 0);
+  const start = nextGoal.kind === 'bodyweight' ? latestBodyweight() : nextGoal.kind === 'sessions' ? 0 : (nextGoal.start ?? 0);
   const goal: Goal = { kind: nextGoal.kind, start, target: nextGoal.target, exerciseId: nextGoal.exerciseId, createdAt: Date.now() };
   const dungeon = appendJournal(state.dungeon, [journalEntry(day, 'dragon', `${state.dragon.name} ${state.dragon.epithet} has fallen.`)]);
   useGame.setState({ hero, dungeon, dragon: newDragon(goal, state.dragon.tier + 1) });
@@ -803,10 +786,7 @@ export function addToDay(dayId: string, exerciseId: string) {
   const timed = getExercise(exerciseId).measure === 'time';
   updateDay(dayId, (day) => ({
     ...day,
-    exercises: [
-      ...day.exercises,
-      { id: uid('slot_'), exerciseId, sets: 3, repMin: timed ? 30 : 8, repMax: timed ? 45 : 12, restSec: 75 },
-    ],
+    exercises: [...day.exercises, { id: uid('slot_'), exerciseId, sets: 3, repMin: timed ? 30 : 8, repMax: timed ? 45 : 12, restSec: 75 }],
   }));
 }
 

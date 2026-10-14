@@ -1,0 +1,11 @@
+dist/
+node_modules/
+assets/
+store/
+playwright-report/
+test-results/
+package-lock.json
+*.md
+.expo/
+android/
+ios/

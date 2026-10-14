@@ -22,13 +22,7 @@ export function milestoneStepKg(goal: Goal): number {
  * Rewards body weight moving the right way. It uses the 7-day average so a
  * single dehydrated morning cannot be farmed, and each milestone pays once.
  */
-export function resolveWeighIn(
-  hero: Hero,
-  goal: Goal,
-  weighIns: readonly WeighIn[],
-  today: DayKey,
-  firstWeighInToday: boolean,
-): WeighInOutcome {
+export function resolveWeighIn(hero: Hero, goal: Goal, weighIns: readonly WeighIn[], today: DayKey, firstWeighInToday: boolean): WeighInOutcome {
   let xp = firstWeighInToday ? BALANCE.xp.weighIn : 0;
   let gold = 0;
   let newMilestones = 0;

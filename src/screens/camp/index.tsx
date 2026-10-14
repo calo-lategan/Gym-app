@@ -72,7 +72,16 @@ export function CampScreen() {
           <IconButton icon="settings" label="Settings" tone="filled" onPress={() => router.push('/settings')} testID="open-settings" />
         </View>
         <View pointerEvents="none" style={{ alignItems: 'center', marginTop: spacing.xs }}>
-          <Text style={{ fontFamily: fonts.display, fontSize: 30, lineHeight: 34, color: colors.bone, textShadowColor: 'rgba(0,0,0,0.9)', textShadowRadius: 10 }}>
+          <Text
+            style={{
+              fontFamily: fonts.display,
+              fontSize: 30,
+              lineHeight: 34,
+              color: colors.bone,
+              textShadowColor: 'rgba(0,0,0,0.9)',
+              textShadowRadius: 10,
+            }}
+          >
             Floor {dungeon.floor}
           </Text>
           <Text variant="caption" color={zone.light} style={{ textShadowColor: 'rgba(0,0,0,0.9)', textShadowRadius: 8 }}>
@@ -144,12 +153,44 @@ export function CampScreen() {
                     Miniboss: {describeChallenge(boss.challenge, (kg) => formatWeight(kg, unit))}
                   </Text>
                 ) : null}
-                <Button title="Begin quest" icon="swords" size="xl" onPress={() => router.push('/check-in?mode=gym')} testID="begin-quest" sound="setStart" />
+                <Button
+                  title="Begin quest"
+                  icon="swords"
+                  size="xl"
+                  onPress={() => router.push('/check-in?mode=gym')}
+                  testID="begin-quest"
+                  sound="setStart"
+                />
                 <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                  <Button title="At home" icon="home" variant="secondary" size="md" style={{ flex: 1 }} onPress={() => router.push('/check-in?mode=home')} testID="train-home" />
-                  <Button title="Move it" icon="clock" variant="secondary" size="md" style={{ flex: 1 }} onPress={() => router.push('/move-session')} testID="move-session" />
+                  <Button
+                    title="At home"
+                    icon="home"
+                    variant="secondary"
+                    size="md"
+                    style={{ flex: 1 }}
+                    onPress={() => router.push('/check-in?mode=home')}
+                    testID="train-home"
+                  />
+                  <Button
+                    title="Move it"
+                    icon="clock"
+                    variant="secondary"
+                    size="md"
+                    style={{ flex: 1 }}
+                    onPress={() => router.push('/move-session')}
+                    testID="move-session"
+                  />
                   {boss && bossReady ? (
-                    <Button title="Boss" icon="skull" variant="danger" size="md" style={{ flex: 1 }} onPress={() => router.push('/check-in?mode=gym&boss=1')} testID="challenge-boss" sound="bossRoar" />
+                    <Button
+                      title="Boss"
+                      icon="skull"
+                      variant="danger"
+                      size="md"
+                      style={{ flex: 1 }}
+                      onPress={() => router.push('/check-in?mode=gym&boss=1')}
+                      testID="challenge-boss"
+                      sound="bossRoar"
+                    />
                   ) : null}
                 </View>
               </>
@@ -158,8 +199,22 @@ export function CampScreen() {
                 <Text variant="title">Rest day</Text>
                 <Text variant="subhead">Muscles grow while you recover, and your streak is safe. Want to move anyway?</Text>
                 <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                  <Button title="Recovery rite" icon="heart" variant="secondary" style={{ flex: 1 }} onPress={() => router.push('/check-in?mode=recovery')} testID="recovery" />
-                  <Button title="Bonus workout" icon="swords" variant="ghost" style={{ flex: 1 }} onPress={() => router.push('/check-in?mode=gym')} testID="bonus-workout" />
+                  <Button
+                    title="Recovery rite"
+                    icon="heart"
+                    variant="secondary"
+                    style={{ flex: 1 }}
+                    onPress={() => router.push('/check-in?mode=recovery')}
+                    testID="recovery"
+                  />
+                  <Button
+                    title="Bonus workout"
+                    icon="swords"
+                    variant="ghost"
+                    style={{ flex: 1 }}
+                    onPress={() => router.push('/check-in?mode=gym')}
+                    testID="bonus-workout"
+                  />
                 </View>
               </>
             )}

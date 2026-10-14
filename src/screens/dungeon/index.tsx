@@ -120,7 +120,11 @@ function DescentMap({ dungeon }: { dungeon: DungeonState }) {
                     backgroundColor: current ? 'rgba(242,169,59,0.18)' : colors.stone,
                     borderWidth: current ? 3 : 2,
                     borderColor: tint,
-                    boxShadow: current ? '0 0 26px rgba(242,169,59,0.55)' : n.boss && n.state === 'ahead' ? '0 0 16px rgba(232,85,62,0.35)' : undefined,
+                    boxShadow: current
+                      ? '0 0 26px rgba(242,169,59,0.55)'
+                      : n.boss && n.state === 'ahead'
+                        ? '0 0 16px rgba(232,85,62,0.35)'
+                        : undefined,
                   }}
                 >
                   <View style={{ transform: [{ rotate: '-45deg' }] }}>
@@ -136,7 +140,14 @@ function DescentMap({ dungeon }: { dungeon: DungeonState }) {
                     maxWidth: width / 2 - size / 2 - 20,
                   }}
                 >
-                  <Text style={{ fontFamily: fonts.displayBold, fontSize: current ? 22 : 18, lineHeight: current ? 26 : 22, color: current ? colors.bone : n.state === 'cleared' ? colors.ash : colors.dim }}>
+                  <Text
+                    style={{
+                      fontFamily: fonts.displayBold,
+                      fontSize: current ? 22 : 18,
+                      lineHeight: current ? 26 : 22,
+                      color: current ? colors.bone : n.state === 'cleared' ? colors.ash : colors.dim,
+                    }}
+                  >
                     Floor {n.floor}
                   </Text>
                   <Text variant="label" color={n.boss ? colors.ember : current ? colors.torch : colors.dim} numberOfLines={1}>
@@ -195,9 +206,20 @@ export function DungeonScreen() {
   const gate = isBossFloor(dungeon.floor)
     ? boss
       ? { icon: 'skull' as const, color: colors.ember, text: `${boss.name} guards the stairs. Beat its challenge to descend.` }
-      : { icon: 'swords' as const, color: colors.torch, text: `Clear ${rooms - dungeon.roomsCleared} more ${rooms - dungeon.roomsCleared === 1 ? 'room' : 'rooms'} to reach the guardian.` }
+      : {
+          icon: 'swords' as const,
+          color: colors.torch,
+          text: `Clear ${rooms - dungeon.roomsCleared} more ${rooms - dungeon.roomsCleared === 1 ? 'room' : 'rooms'} to reach the guardian.`,
+        }
     : dungeon.sigils > 0
-      ? { icon: 'unlock' as const, color: colors.verdant, text: dungeon.roomsCleared >= rooms ? 'The seal is broken. Your next completed quest descends.' : 'The seal is broken. Clear the rooms to descend.' }
+      ? {
+          icon: 'unlock' as const,
+          color: colors.verdant,
+          text:
+            dungeon.roomsCleared >= rooms
+              ? 'The seal is broken. Your next completed quest descends.'
+              : 'The seal is broken. Clear the rooms to descend.',
+        }
       : { icon: 'lock' as const, color: colors.torch, text: 'The gate is sealed. Set any personal record on this floor to break it.' };
 
   const journal = dungeon.journal.slice(0, 24);
@@ -215,13 +237,30 @@ export function DungeonScreen() {
           {Array.from({ length: rooms }, (_, i) => (
             <View
               key={i}
-              style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: i < dungeon.roomsCleared ? colors.torch : 'rgba(0,0,0,0.4)', borderWidth: 1, borderColor: colors.seam }}
+              style={{
+                flex: 1,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: i < dungeon.roomsCleared ? colors.torch : 'rgba(0,0,0,0.4)',
+                borderWidth: 1,
+                borderColor: colors.seam,
+              }}
             />
           ))}
-          <View style={{ width: 8, height: 8, borderRadius: 4, marginLeft: spacing.xs, backgroundColor: dungeon.sigils > 0 || (isBossFloor(dungeon.floor) && !boss) ? colors.verdant : colors.ember }} />
+          <View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              marginLeft: spacing.xs,
+              backgroundColor: dungeon.sigils > 0 || (isBossFloor(dungeon.floor) && !boss) ? colors.verdant : colors.ember,
+            }}
+          />
         </View>
         <Text variant="caption">
-          {isBossFloor(dungeon.floor) ? 'This is a guardian floor.' : `Next guardian on floor ${nextBossFloor}, ${nextBossFloor - dungeon.floor} ${nextBossFloor - dungeon.floor === 1 ? 'floor' : 'floors'} down.`}{' '}
+          {isBossFloor(dungeon.floor)
+            ? 'This is a guardian floor.'
+            : `Next guardian on floor ${nextBossFloor}, ${nextBossFloor - dungeon.floor} ${nextBossFloor - dungeon.floor === 1 ? 'floor' : 'floors'} down.`}{' '}
           Every completed quest clears a room. Records break gate seals.
         </Text>
       </Panel>
@@ -261,7 +300,11 @@ export function DungeonScreen() {
       ) : null}
 
       {dragon && goal ? (
-        <Panel onPress={() => router.push('/lair')} testID="dragon-panel" accessibilityLabel={`${dragon.name}, ward ${Math.round(dragonHealth(progress) * 100)} percent. Enter the lair.`}>
+        <Panel
+          onPress={() => router.push('/lair')}
+          testID="dragon-panel"
+          accessibilityLabel={`${dragon.name}, ward ${Math.round(dragonHealth(progress) * 100)} percent. Enter the lair.`}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
             <Icon name="dragon" size={28} color={colors.ember} />
             <View style={{ flex: 1 }}>
@@ -306,7 +349,16 @@ export function DungeonScreen() {
                     </>
                   ) : null}
                   <View style={{ flexDirection: 'row', gap: spacing.ms, alignItems: 'flex-start' }}>
-                    <View style={{ width: 28, height: 28, borderRadius: radius.sm, backgroundColor: 'rgba(0,0,0,0.3)', alignItems: 'center', justifyContent: 'center' }}>
+                    <View
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: radius.sm,
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <Icon name={meta.icon} size={16} color={meta.color} />
                     </View>
                     <Text variant="body" style={{ flex: 1 }}>

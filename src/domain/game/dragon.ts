@@ -58,12 +58,10 @@ export function crossedPhases(previousBest: number, progress: number): DragonPha
 export function describeGoal(goal: Goal, formatLoad: (kg: number) => string, exerciseName?: string): string {
   switch (goal.kind) {
     case 'bodyweight':
-      return goal.target < goal.start
-        ? `Reach ${formatLoad(goal.target)} body weight`
-        : `Build up to ${formatLoad(goal.target)} body weight`;
+      return goal.target < goal.start ? `Reach ${formatLoad(goal.target)} body weight` : `Build up to ${formatLoad(goal.target)} body weight`;
     case 'lift':
       return `${exerciseName ?? 'Lift'}: estimated max of ${formatLoad(goal.target)}`;
     case 'sessions':
-      return `Complete ${goal.target} workouts`;
+      return `Complete ${goal.target} ${goal.target === 1 ? 'workout' : 'workouts'}`;
   }
 }

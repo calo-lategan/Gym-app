@@ -36,12 +36,7 @@ const LINES = [
  * earlier or later, or become a rest day, without touching the rest of the
  * week. Re-plan whenever the app opens or the schedule changes.
  */
-export function planReminders(
-  schedule: Schedule,
-  now: Date,
-  context: ReminderContext,
-  days = 14,
-): PlannedReminder[] {
+export function planReminders(schedule: Schedule, now: Date, context: ReminderContext, days = 14): PlannedReminder[] {
   if (!schedule.remindersEnabled) return [];
   const today = dayKeyOf(now);
   const reminders: PlannedReminder[] = [];
@@ -94,10 +89,7 @@ export function moveOptions(now: Date): MoveOption[] {
   const minutesNow = now.getHours() * 60 + now.getMinutes();
   const later = options.filter((o) => o.hour * 60 + o.minute > minutesNow + 15);
   const inAnHour = new Date(now.getTime() + 60 * 60_000);
-  return [
-    { label: 'In an hour', hour: inAnHour.getHours(), minute: Math.floor(inAnHour.getMinutes() / 5) * 5 },
-    ...later,
-  ];
+  return [{ label: 'In an hour', hour: inAnHour.getHours(), minute: Math.floor(inAnHour.getMinutes() / 5) * 5 }, ...later];
 }
 
 /** Swap today with the next rest day: rest now, train on that day instead. */

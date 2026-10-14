@@ -78,10 +78,15 @@ export function SettingsScreen() {
   const changeFocus = (focus: Focus) => {
     if (focus === profile.focus) return;
     updateProfile({ focus });
-    confirm('Rebuild your plan for this focus?', 'Sets, reps and exercise choice change with your focus. Your history and records stay.', 'Rebuild', () => {
-      regenerateProgram();
-      toast({ title: 'Plan rebuilt', icon: 'plan', tone: 'torch' });
-    });
+    confirm(
+      'Rebuild your plan for this focus?',
+      'Sets, reps and exercise choice change with your focus. Your history and records stay.',
+      'Rebuild',
+      () => {
+        regenerateProgram();
+        toast({ title: 'Plan rebuilt', icon: 'plan', tone: 'torch' });
+      },
+    );
   };
 
   const exportAll = async () => {
@@ -106,7 +111,13 @@ export function SettingsScreen() {
           <Text variant="label">Class</Text>
           <ChipRow>
             {HERO_CLASSES.map((c) => (
-              <Chip key={c.id} label={c.name} selected={hero.heroClass === c.id} onPress={() => setHeroClass(c.id)} testID={`settings-class-${c.id}`} />
+              <Chip
+                key={c.id}
+                label={c.name}
+                selected={hero.heroClass === c.id}
+                onPress={() => setHeroClass(c.id)}
+                testID={`settings-class-${c.id}`}
+              />
             ))}
           </ChipRow>
         </Panel>
@@ -117,7 +128,13 @@ export function SettingsScreen() {
           <Text variant="label">Focus</Text>
           <ChipRow>
             {FOCI.map((f) => (
-              <Chip key={f.id} label={f.label} selected={profile.focus === f.id} onPress={() => changeFocus(f.id)} testID={`settings-focus-${f.id}`} />
+              <Chip
+                key={f.id}
+                label={f.label}
+                selected={profile.focus === f.id}
+                onPress={() => changeFocus(f.id)}
+                testID={`settings-focus-${f.id}`}
+              />
             ))}
           </ChipRow>
           <Text variant="label">Experience</Text>
@@ -187,8 +204,20 @@ export function SettingsScreen() {
 
       <Section title="Feel">
         <Panel>
-          <ToggleRow label="Sound effects" icon="sound" value={settings.sound} onValueChange={(sound) => updateSettings({ sound })} testID="settings-sound" />
-          <ToggleRow label="Dungeon ambience" detail="Low background drone at camp." icon="moon" value={settings.ambience} onValueChange={(ambience) => updateSettings({ ambience })} />
+          <ToggleRow
+            label="Sound effects"
+            icon="sound"
+            value={settings.sound}
+            onValueChange={(sound) => updateSettings({ sound })}
+            testID="settings-sound"
+          />
+          <ToggleRow
+            label="Dungeon ambience"
+            detail="Low background drone at camp."
+            icon="moon"
+            value={settings.ambience}
+            onValueChange={(ambience) => updateSettings({ ambience })}
+          />
           <ToggleRow label="Haptics" icon="vibrate" value={settings.haptics} onValueChange={(haptics) => updateSettings({ haptics })} />
           <ToggleRow
             label="Full 3D graphics"
@@ -210,7 +239,13 @@ export function SettingsScreen() {
             icon="trash"
             variant="danger"
             onPress={() =>
-              confirm('Start over?', 'Your hero, history, records and plan are deleted from this phone. This cannot be undone.', 'Delete everything', resetAll, true)
+              confirm(
+                'Start over?',
+                'Your hero, history, records and plan are deleted from this phone. This cannot be undone.',
+                'Delete everything',
+                resetAll,
+                true,
+              )
             }
             testID="settings-reset"
           />
@@ -220,12 +255,14 @@ export function SettingsScreen() {
       <Section title="About">
         <Panel>
           <Button title="The science behind the plan" icon="brain" variant="ghost" onPress={() => router.push('/science')} />
+          <Button title="Privacy" icon="lock" variant="ghost" onPress={() => router.push('/privacy')} testID="settings-privacy" />
           <Text variant="caption">
-            Ironwyrm {version}. Characters and dungeon art by Kay Lousberg (KayKit, CC0). Grenze Gotisch typeface under the SIL Open Font License. Sound effects
-            made for this game.
+            Ironwyrm {version}. Characters and dungeon art by Kay Lousberg (KayKit, CC0). Grenze Gotisch typeface under the SIL Open Font License.
+            Sound effects made for this game.
           </Text>
           <Text variant="caption">
-            Training advice here is general guidance, not medical advice. Stop and see a professional if something hurts beyond normal training soreness.
+            Training advice here is general guidance, not medical advice. Stop and see a professional if something hurts beyond normal training
+            soreness.
           </Text>
         </Panel>
       </Section>

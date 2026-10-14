@@ -2,10 +2,8 @@ import type { Exercise, Experience, SetLog, Sex, WeightUnit } from './types';
 
 export const KG_PER_LB = 0.45359237;
 
-export const toDisplayWeight = (kg: number, unit: WeightUnit) =>
-  unit === 'kg' ? kg : kg / KG_PER_LB;
-export const fromDisplayWeight = (value: number, unit: WeightUnit) =>
-  unit === 'kg' ? value : value * KG_PER_LB;
+export const toDisplayWeight = (kg: number, unit: WeightUnit) => (unit === 'kg' ? kg : kg / KG_PER_LB);
+export const fromDisplayWeight = (value: number, unit: WeightUnit) => (unit === 'kg' ? value : value * KG_PER_LB);
 
 /** Display value for a load, rounded to 0.25 kg or 1 lb with trailing zeros trimmed. */
 export function displayWeightValue(kg: number, unit: WeightUnit): number {

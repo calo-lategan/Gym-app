@@ -43,12 +43,10 @@ type Beat =
 const STAT_ORDER: StatKey[] = ['str', 'end', 'agi', 'vit'];
 const MAX_PRS_SHOWN = 3;
 
-const statGainsOf = (o: StoredOutcome) =>
-  STAT_ORDER.flatMap((k) => ((o.statGains[k] ?? 0) > 0 ? [{ key: k, amount: o.statGains[k] ?? 0 }] : []));
+const statGainsOf = (o: StoredOutcome) => STAT_ORDER.flatMap((k) => ((o.statGains[k] ?? 0) > 0 ? [{ key: k, amount: o.statGains[k] ?? 0 }] : []));
 
 /** Dungeon events worth a line; a boss kill gets its own beat. */
-const dungeonLines = (o: StoredOutcome) =>
-  o.dungeonEvents.filter((e) => e.type !== 'boss_defeated' || !o.boss);
+const dungeonLines = (o: StoredOutcome) => o.dungeonEvents.filter((e) => e.type !== 'boss_defeated' || !o.boss);
 
 function buildBeats(o: StoredOutcome): Beat[] {
   const beats: Beat[] = [{ kind: 'summary' }, { kind: 'xp' }];
@@ -158,6 +156,20 @@ function useCountUp(target: number, durationMs: number, delayMs = 0, onStep?: (v
   return instant ? target : value;
 }
 
+/**
+ * How many of `count` items are revealed so far, one every `stepMs` after
+ * `startMs`. Items mount when revealed, so their entering animation always
+ * plays (nested delayed entering animations are skipped on web).
+ */
+function useStagger(count: number, startMs: number, stepMs: number): number {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const timers = Array.from({ length: count }, (_, i) => setTimeout(() => setShown(i + 1), startMs + i * stepMs));
+    return () => timers.forEach(clearTimeout);
+  }, [count, startMs, stepMs]);
+  return shown;
+}
+
 // ── Effects bus ────────────────────────────────────────────────────
 
 type FxKey = 'cheer' | 'ring' | 'level' | 'coin' | 'shake';
@@ -184,7 +196,17 @@ function leave() {
 function NoOutcome() {
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1, backgroundColor: colors.abyss, alignItems: 'center', justifyContent: 'center', padding: spacing.lg, paddingBottom: insets.bottom + spacing.lg, gap: spacing.md }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.abyss,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: spacing.lg,
+        paddingBottom: insets.bottom + spacing.lg,
+        gap: spacing.md,
+      }}
+    >
       <Icon name="swords" size={40} color={colors.dim} />
       <Text variant="title" align="center">
         No battle to report yet
@@ -206,11 +228,18 @@ function VictorySequence({ outcome }: { outcome: StoredOutcome }) {
   const beat = beats[index];
   const done = beat.kind === 'done';
 
-  const [keys, setKeys] = useState<Record<FxKey, number>>({ cheer: 0, ring: 0, level: 0, coin: 0, shake: 0 });
-  const [chest, setChest] = useState<VictorySceneChest | null>(
-    outcome.loot.length > 0 ? { key: 0, open: false, color: null, gold: false } : null,
-  );
-  const [flashColor, setFlashColor] = useState<{ color: string; key: number } | null>(null);
+  const [keys, setKeys] = useState<Record<FxKey, number>>({
+    cheer: 0,
+    ring: 0,
+    level: 0,
+    coin: 0,
+    shake: 0,
+  });
+  const [chest, setChest] = useState<VictorySceneChest | null>(outcome.loot.length > 0 ? { key: 0, open: false, color: null, gold: false } : null);
+  const [flashColor, setFlashColor] = useState<{
+    color: string;
+    key: number;
+  } | null>(null);
 
   const fx = useMemo<Fx>(
     () => ({
@@ -238,7 +267,16 @@ function VictorySequence({ outcome }: { outcome: StoredOutcome }) {
   const finale = useCallback(() => {
     const best = bestDrop(outcome.loot);
     if (best) {
-      setChest((c) => (c?.open ? c : { key: 99, open: true, color: rarityColors[best.item.rarity], gold: isGold(best.item.rarity) }));
+      setChest((c) =>
+        c?.open
+          ? c
+          : {
+              key: 99,
+              open: true,
+              color: rarityColors[best.item.rarity],
+              gold: isGold(best.item.rarity),
+            },
+      );
     }
     if (outcome.completed) fx.bump('cheer');
   }, [fx, outcome]);
@@ -321,14 +359,36 @@ function VictorySequence({ outcome }: { outcome: StoredOutcome }) {
         />
       ) : null}
 
-      <View pointerEvents="box-none" style={{ paddingTop: insets.top + spacing.xs, paddingHorizontal: spacing.md }}>
-        <View pointerEvents="box-none" style={{ flexDirection: 'row', justifyContent: 'flex-end', minHeight: 48 }}>
+      <View
+        pointerEvents="box-none"
+        style={{
+          paddingTop: insets.top + spacing.xs,
+          paddingHorizontal: spacing.md,
+        }}
+      >
+        <View
+          pointerEvents="box-none"
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            minHeight: 48,
+          }}
+        >
           {!done ? <Button title="Skip" variant="ghost" size="sm" onPress={skipAll} testID="victory-skip" sound={null} /> : null}
         </View>
         <Title outcome={outcome} />
       </View>
 
-      <View pointerEvents="box-none" style={{ flex: 1, justifyContent: 'flex-end', paddingHorizontal: spacing.md, paddingBottom: insets.bottom + spacing.md, gap: spacing.ms }}>
+      <View
+        pointerEvents="box-none"
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          paddingHorizontal: spacing.md,
+          paddingBottom: insets.bottom + spacing.md,
+          gap: spacing.ms,
+        }}
+      >
         {done ? (
           <Summary outcome={outcome} />
         ) : (
@@ -478,7 +538,16 @@ function BeatView({ beat, outcome, fx }: { beat: Beat; outcome: StoredOutcome; f
 
 function Tile({ label, value, color = colors.bone }: { label: string; value: string; color?: string }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', gap: 2, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: 'rgba(0,0,0,0.25)' }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        gap: 2,
+        paddingVertical: spacing.sm,
+        borderRadius: radius.md,
+        backgroundColor: 'rgba(0,0,0,0.25)',
+      }}
+    >
       <Text variant="stat" color={color}>
         {value}
       </Text>
@@ -537,7 +606,16 @@ function XpBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
     <Card testID="beat-xp" glow={leveled ? colors.torch : undefined}>
       {leveled ? (
         <Animated.View key={state.level} entering={ZoomIn.springify().damping(9)} style={{ alignItems: 'center' }}>
-          <Text style={{ fontFamily: fonts.display, fontSize: 34, lineHeight: 38, color: colors.torchHigh, textShadowColor: 'rgba(242,169,59,0.9)', textShadowRadius: 18 }}>
+          <Text
+            style={{
+              fontFamily: fonts.display,
+              fontSize: 34,
+              lineHeight: 38,
+              color: colors.torchHigh,
+              textShadowColor: 'rgba(242,169,59,0.9)',
+              textShadowRadius: 18,
+            }}
+          >
             Level up
           </Text>
         </Animated.View>
@@ -548,7 +626,13 @@ function XpBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
         </Animated.View>
         <View style={{ flex: 1, gap: 6 }}>
           <BigNumber>+{shown} XP</BigNumber>
-          <ProgressBar key={state.level} value={state.xp / state.need} durationMs={90} height={12} accessibilityLabel={`Experience ${state.xp} of ${state.need}`} />
+          <ProgressBar
+            key={state.level}
+            value={state.xp / state.need}
+            durationMs={90}
+            height={12}
+            accessibilityLabel={`Experience ${state.xp} of ${state.need}`}
+          />
           <Text variant="caption" style={{ fontVariant: ['tabular-nums'] }}>
             {state.xp} / {state.need} to level {state.level + 1}
           </Text>
@@ -557,7 +641,17 @@ function XpBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
       {parts.length > 0 ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
           {parts.map((p) => (
-            <View key={p.label} style={{ flexDirection: 'row', gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 3, borderRadius: radius.full, backgroundColor: 'rgba(242,169,59,0.12)' }}>
+            <View
+              key={p.label}
+              style={{
+                flexDirection: 'row',
+                gap: 4,
+                paddingHorizontal: spacing.sm,
+                paddingVertical: 3,
+                borderRadius: radius.full,
+                backgroundColor: 'rgba(242,169,59,0.12)',
+              }}
+            >
               <Text variant="label">{p.label}</Text>
               <Text variant="label" color={colors.torchHigh}>
                 {p.value}
@@ -587,7 +681,18 @@ function GoldBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
     <Card testID="beat-gold">
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
         <Animated.View entering={ZoomIn.springify().damping(8)}>
-          <View style={{ width: 58, height: 58, borderRadius: 29, backgroundColor: 'rgba(242,169,59,0.16)', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.torch }}>
+          <View
+            style={{
+              width: 58,
+              height: 58,
+              borderRadius: 29,
+              backgroundColor: 'rgba(242,169,59,0.16)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 2,
+              borderColor: colors.torch,
+            }}
+          >
             <Icon name="coin" size={30} color={colors.torchHigh} />
           </View>
         </Animated.View>
@@ -611,17 +716,34 @@ function StatsBeat({ outcome }: { outcome: StoredOutcome }) {
       },
     ]),
   );
+  const shown = useStagger(gains.length, 250, 450);
   return (
     <Card testID="beat-stats">
       <Text variant="heading" align="center">
         Your hero grows stronger
       </Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.sm }}>
-        {gains.map((g, i) => (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          gap: spacing.sm,
+          minHeight: 96,
+        }}
+      >
+        {gains.slice(0, shown).map((g) => (
           <Animated.View
             key={g.key}
-            entering={ZoomIn.delay(250 + i * 450).springify().damping(9)}
-            style={{ minWidth: 76, alignItems: 'center', paddingVertical: spacing.sm, paddingHorizontal: spacing.ms, borderRadius: radius.md, borderWidth: 1, borderColor: colors.torch, backgroundColor: 'rgba(242,169,59,0.1)' }}
+            entering={ZoomIn.springify().damping(9)}
+            style={{
+              minWidth: 76,
+              alignItems: 'center',
+              paddingVertical: spacing.sm,
+              paddingHorizontal: spacing.ms,
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.torch,
+              backgroundColor: 'rgba(242,169,59,0.1)',
+            }}
           >
             <BigNumber size={32}>+{g.amount}</BigNumber>
             <Text variant="label" color={colors.torchHigh}>
@@ -674,15 +796,29 @@ function RecordsBeat({ outcome, unit, fx }: { outcome: StoredOutcome; unit: Weig
       },
     ]),
   );
+  const revealed = useStagger(shown.length, 150, 700);
   return (
     <Card testID="beat-records" glow={colors.torch}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, justifyContent: 'center' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          justifyContent: 'center',
+        }}
+      >
         <Icon name="trophy" size={28} color={colors.torchHigh} />
         <BigNumber size={34}>{outcome.prs.length === 1 ? 'New record' : `${outcome.prs.length} new records`}</BigNumber>
       </View>
-      {shown.map((pr, i) => (
-        <Animated.View key={`${pr.exerciseId}-${pr.kind}-${pr.setId}`} entering={FadeInDown.delay(150 + i * 700).springify()} style={{ gap: 2 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm }}>
+      {shown.slice(0, revealed).map((pr) => (
+        <Animated.View key={`${pr.exerciseId}-${pr.kind}-${pr.setId}`} entering={FadeInDown.springify()} style={{ gap: 2 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'baseline',
+              gap: spacing.sm,
+            }}
+          >
             <Text variant="bodyStrong" numberOfLines={1} style={{ flexShrink: 1 }}>
               {findExercise(pr.exerciseId)?.name ?? 'Exercise'}
             </Text>
@@ -708,11 +844,25 @@ function LootBeat({ drop, index, fx }: { drop: LootDrop; index: number; fx: Fx }
   const rank = rarityRank(item.rarity);
   const reveal = 950;
   useSchedule(() => [
-    [0, () => fx.setChest({ key: index + 1, open: false, color: null, gold: isGold(item.rarity) })],
+    [
+      0,
+      () =>
+        fx.setChest({
+          key: index + 1,
+          open: false,
+          color: null,
+          gold: isGold(item.rarity),
+        }),
+    ],
     [
       420,
       () => {
-        fx.setChest({ key: index + 1, open: true, color, gold: isGold(item.rarity) });
+        fx.setChest({
+          key: index + 1,
+          open: true,
+          color,
+          gold: isGold(item.rarity),
+        });
         play('chestOpen', 0.9);
         haptics.impact();
         fx.bump('shake');
@@ -732,50 +882,80 @@ function LootBeat({ drop, index, fx }: { drop: LootDrop; index: number; fx: Fx }
       },
     ],
   ]);
-  const source = drop.source === 'level' ? 'Level reward' : drop.source === 'boss' ? 'Boss hoard' : drop.source === 'floor' ? 'Floor vault' : 'Room chest';
+  const revealed = useStagger(1, reveal, 0) > 0;
+  const source =
+    drop.source === 'level' ? 'Level reward' : drop.source === 'boss' ? 'Boss hoard' : drop.source === 'floor' ? 'Floor vault' : 'Room chest';
   return (
     <Card testID="beat-loot">
       <Text variant="label" align="center" color={colors.dim}>
         {source}
       </Text>
-      <Animated.View entering={ZoomIn.delay(reveal).springify().damping(10)} style={{ gap: spacing.sm }}>
-        <View
-          style={{
-            borderRadius: radius.md,
-            borderWidth: 2,
-            borderColor: color,
-            padding: spacing.ms,
-            gap: 6,
-            backgroundColor: `${color}14`,
-            boxShadow: `0 0 28px ${color}88`,
-          }}
-        >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text variant="label" color={color}>
-              {RARITY_LABELS[item.rarity]} {SLOT_LABELS[item.slot].toLowerCase()}
+      {revealed ? (
+        <Animated.View entering={ZoomIn.springify().damping(10)} style={{ gap: spacing.sm }}>
+          <View
+            style={{
+              borderRadius: radius.md,
+              borderWidth: 2,
+              borderColor: color,
+              padding: spacing.ms,
+              gap: 6,
+              backgroundColor: `${color}14`,
+              boxShadow: `0 0 28px ${color}88`,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text variant="label" color={color}>
+                {RARITY_LABELS[item.rarity]} {SLOT_LABELS[item.slot].toLowerCase()}
+              </Text>
+              {drop.equipped ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
+                    paddingHorizontal: spacing.sm,
+                    paddingVertical: 2,
+                    borderRadius: radius.full,
+                    backgroundColor: 'rgba(102,212,156,0.16)',
+                  }}
+                >
+                  <Icon name="check" size={12} color={colors.verdant} />
+                  <Text variant="label" color={colors.verdant}>
+                    Equipped
+                  </Text>
+                </View>
+              ) : (
+                <Text variant="label">In your pack</Text>
+              )}
+            </View>
+            <Text
+              style={{
+                fontFamily: fonts.displayBold,
+                fontSize: 26,
+                lineHeight: 30,
+                color: colors.bone,
+              }}
+              numberOfLines={2}
+            >
+              {item.name}
             </Text>
-            {drop.equipped ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.full, backgroundColor: 'rgba(102,212,156,0.16)' }}>
-                <Icon name="check" size={12} color={colors.verdant} />
-                <Text variant="label" color={colors.verdant}>
-                  Equipped
-                </Text>
-              </View>
-            ) : (
-              <Text variant="label">In your pack</Text>
-            )}
+            <View style={{ flexDirection: 'row', gap: spacing.md }}>
+              <Text variant="bodyStrong" color={color}>
+                Power {item.power}
+              </Text>
+              {describeBonus(item.bonus) ? <Text variant="bodyStrong">{describeBonus(item.bonus)}</Text> : null}
+            </View>
           </View>
-          <Text style={{ fontFamily: fonts.displayBold, fontSize: 26, lineHeight: 30, color: colors.bone }} numberOfLines={2}>
-            {item.name}
-          </Text>
-          <View style={{ flexDirection: 'row', gap: spacing.md }}>
-            <Text variant="bodyStrong" color={color}>
-              Power {item.power}
-            </Text>
-            {describeBonus(item.bonus) ? <Text variant="bodyStrong">{describeBonus(item.bonus)}</Text> : null}
-          </View>
-        </View>
-      </Animated.View>
+        </Animated.View>
+      ) : (
+        <View style={{ height: 118 }} />
+      )}
     </Card>
   );
 }
@@ -817,11 +997,21 @@ function BossBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
           <Text variant="label" color={boss.success ? colors.torchHigh : colors.ember}>
             {boss.success ? 'Miniboss defeated' : 'The guardian holds'}
           </Text>
-          <Text style={{ fontFamily: fonts.displayBold, fontSize: 28, lineHeight: 32, color: colors.bone }} numberOfLines={2}>
+          <Text
+            style={{
+              fontFamily: fonts.displayBold,
+              fontSize: 28,
+              lineHeight: 32,
+              color: colors.bone,
+            }}
+            numberOfLines={2}
+          >
             {boss.name}
           </Text>
           <Text variant="caption">
-            {boss.success ? 'Its hoard is yours and the stairs lie open.' : 'It waits for you next week. Every set you log makes you stronger for the rematch.'}
+            {boss.success
+              ? 'Its hoard is yours and the stairs lie open.'
+              : 'It waits for you next week. Every set you log makes you stronger for the rematch.'}
           </Text>
         </View>
       </View>
@@ -832,17 +1022,44 @@ function BossBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
 function dungeonLine(event: DungeonEvent, bossName: string): { icon: IconName; color: string; text: string; sub?: string } {
   switch (event.type) {
     case 'room_cleared':
-      return { icon: 'swords', color: colors.torch, text: `Room ${event.room} cleared, ${event.monsters.length} ${event.monsters.length === 1 ? 'foe' : 'foes'} felled` };
+      return {
+        icon: 'swords',
+        color: colors.torch,
+        text: `Room ${event.room} cleared, ${event.monsters.length} ${event.monsters.length === 1 ? 'foe' : 'foes'} felled`,
+      };
     case 'sigil':
-      return { icon: 'unlock', color: colors.verdant, text: 'Your record broke the gate seal' };
+      return {
+        icon: 'unlock',
+        color: colors.verdant,
+        text: 'Your record broke the gate seal',
+      };
     case 'gate_sealed':
-      return { icon: 'lock', color: colors.ember, text: 'The gate is sealed', sub: 'Set any personal record to break it.' };
+      return {
+        icon: 'lock',
+        color: colors.ember,
+        text: 'The gate is sealed',
+        sub: 'Set any personal record to break it.',
+      };
     case 'boss_chamber':
-      return { icon: 'skull', color: colors.ember, text: `${bossName} guards the stairs`, sub: 'Face it on a training day this week.' };
+      return {
+        icon: 'skull',
+        color: colors.ember,
+        text: `${bossName} guards the stairs`,
+        sub: 'Face it on a training day this week.',
+      };
     case 'boss_defeated':
-      return { icon: 'crown', color: colors.torchHigh, text: `${event.name} defeated` };
+      return {
+        icon: 'crown',
+        color: colors.torchHigh,
+        text: `${event.name} defeated`,
+      };
     case 'descended':
-      return { icon: 'stairs', color: colors.torchHigh, text: `Descended to floor ${event.floor}`, sub: event.newZone ? `Entering ${event.zone}` : undefined };
+      return {
+        icon: 'stairs',
+        color: colors.torchHigh,
+        text: `Descended to floor ${event.floor}`,
+        sub: event.newZone ? `Entering ${event.zone}` : undefined,
+      };
   }
 }
 
@@ -874,13 +1091,22 @@ function DungeonBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
       },
     ]),
   );
+  const revealed = useStagger(events.length, 120, 750);
   return (
     <Card testID="beat-dungeon">
       <Text variant="heading">Floor {outcome.floorBefore}</Text>
-      {events.map((e, i) => {
+      {events.slice(0, revealed).map((e, i) => {
         const line = dungeonLine(e, bossName);
         return (
-          <Animated.View key={i} entering={FadeInDown.delay(120 + i * 750).springify()} style={{ flexDirection: 'row', gap: spacing.ms, alignItems: 'flex-start' }}>
+          <Animated.View
+            key={i}
+            entering={FadeInDown.springify()}
+            style={{
+              flexDirection: 'row',
+              gap: spacing.ms,
+              alignItems: 'flex-start',
+            }}
+          >
             <Icon name={line.icon} size={22} color={line.color} />
             <View style={{ flex: 1 }}>
               <Text variant="bodyStrong">{line.text}</Text>
@@ -919,12 +1145,21 @@ function DragonBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
     ],
   ]);
   const dealt = Math.max(0, Math.round((summary.after - summary.before) * 100));
+  const revealed = useStagger(summary.lines.length, 900, 700);
   return (
     <Card testID="beat-dragon" glow={colors.ember}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
         <Icon name="dragon" size={30} color={colors.ember} />
         <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: fonts.displayBold, fontSize: 24, lineHeight: 28, color: colors.bone }} numberOfLines={1}>
+          <Text
+            style={{
+              fontFamily: fonts.displayBold,
+              fontSize: 24,
+              lineHeight: 28,
+              color: colors.bone,
+            }}
+            numberOfLines={1}
+          >
             {dragon?.name ?? 'The dragon'}
           </Text>
           <Text variant="caption">{dealt > 0 ? `Your progress tore ${dealt}% from its ward.` : 'Its ward trembles.'}</Text>
@@ -934,8 +1169,8 @@ function DragonBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
         </Text>
       </View>
       <ProgressBar value={ward} tone="hp" height={14} durationMs={1300} accessibilityLabel="Dragon ward" />
-      {summary.lines.map((line, i) => (
-        <Animated.View key={line} entering={FadeInDown.delay(900 + i * 700).springify()}>
+      {summary.lines.slice(0, revealed).map((line) => (
+        <Animated.View key={line} entering={FadeInDown.springify()}>
           <Text variant="bodyStrong" color={colors.ember}>
             {line}
           </Text>
@@ -949,7 +1184,13 @@ function DragonBeat({ outcome, fx }: { outcome: StoredOutcome; fx: Fx }) {
 
 function SummaryRow({ icon, color, children }: { icon: IconName; color: string; children: ReactNode }) {
   return (
-    <View style={{ flexDirection: 'row', gap: spacing.ms, alignItems: 'flex-start' }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        gap: spacing.ms,
+        alignItems: 'flex-start',
+      }}
+    >
       <Icon name={icon} size={20} color={color} />
       <View style={{ flex: 1, gap: 2 }}>{children}</View>
     </View>

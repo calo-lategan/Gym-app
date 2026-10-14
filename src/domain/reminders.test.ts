@@ -63,8 +63,7 @@ describe('planReminders', () => {
 
 describe('weigh-ins', () => {
   const goal: Goal = { kind: 'bodyweight', start: 90, target: 80, createdAt: 0 };
-  const series = (values: number[]): WeighIn[] =>
-    values.map((kg, i) => ({ dayKey: addDays('2026-10-13', -values.length + 1 + i), kg, at: 0 }));
+  const series = (values: number[]): WeighIn[] => values.map((kg, i) => ({ dayKey: addDays('2026-10-13', -values.length + 1 + i), kg, at: 0 }));
 
   it('pays a milestone per 1% of starting weight lost, judged on the weekly average', () => {
     expect(milestoneStepKg(goal)).toBe(0.9);

@@ -73,32 +73,37 @@ export function ScienceScreen() {
             : null
         }
       >
-        Muscle grows with weekly hard sets, up to a point. Around 10 or more sets per muscle a week beats fewer, and past each muscle&apos;s recovery limit (its MRV)
-        extra sets stop paying. Your plan aims every muscle into that window and the app warns before a session would push you past it.
+        Muscle grows with weekly hard sets, up to a point. Around 10 or more sets per muscle a week beats fewer, and past each muscle&apos;s recovery
+        limit (its MRV) extra sets stop paying. Your plan aims every muscle into that window and the app warns before a session would push you past
+        it.
       </Topic>
 
       <Topic icon="up" title="Getting stronger, safely">
-        Double progression: stay at a weight until you hit the top of the rep range on every set, then add the smallest jump the equipment allows. The app
-        suggests the next weight and flags any jump of more than about 10% on upper body or 15% on lower body lifts.
+        Double progression: stay at a weight until you hit the top of the rep range on every set, then add the smallest jump the equipment allows. The
+        app suggests the next weight and flags any jump of more than about 10% on upper body or 15% on lower body lifts.
       </Topic>
 
       <Topic
         icon="warning"
         title="Load spikes"
-        yours={acwr !== null ? `Your last 7 days are at ${acwr.toFixed(2)} times your 4 week average${acwr > 1.5 ? ', a spike. Ease in this week.' : acwr < 0.8 ? '. Room to build up.' : ', a healthy range.'}` : null}
+        yours={
+          acwr !== null
+            ? `Your last 7 days are at ${acwr.toFixed(2)} times your 4 week average${acwr > 1.5 ? ', a spike. Ease in this week.' : acwr < 0.8 ? '. Room to build up.' : ', a healthy range.'}`
+            : null
+        }
       >
         Injuries cluster when this week&apos;s training load jumps well above what you are used to. The app compares the last 7 days with your 4 week
         average (the acute to chronic workload ratio). Above about 1.5 is a red flag; 0.8 to 1.3 is the sweet spot.
       </Topic>
 
       <Topic icon="bed" title="Recovery between sessions">
-        Big muscles such as chest, back and legs usually need 48 to 72 hours between hard sessions, smaller ones 24 to 48. If a plan would hit a muscle too
-        soon, the app tells you and the check-in trims that work.
+        Big muscles such as chest, back and legs usually need 48 to 72 hours between hard sessions, smaller ones 24 to 48. If a plan would hit a
+        muscle too soon, the app tells you and the check-in trims that work.
       </Topic>
 
       <Topic icon="heart" title="The daily check-in">
-        Sleep, energy, stress and soreness predict how a session will go. On a rough day the app trims sets and load and lengthens rest, and swaps out moves
-        that load a sore joint, so you still train instead of skipping.
+        Sleep, energy, stress and soreness predict how a session will go. On a rough day the app trims sets and load and lengthens rest, and swaps out
+        moves that load a sore joint, so you still train instead of skipping.
       </Topic>
 
       <Topic
@@ -106,22 +111,26 @@ export function ScienceScreen() {
         title="Fuel"
         yours={`For about ${fmt(bodyweight)}: ${targets.proteinG[0]} to ${targets.proteinG[1]} g of protein, about ${(targets.waterMl / 1000).toFixed(1)} litres of water and ${targets.sleepHours[0]} to ${targets.sleepHours[1]} hours of sleep.`}
       >
-        Protein around 1.6 g per kg of body weight covers most lifters, with up to 2.2 g/kg helpful in a calorie deficit. Sleep is when most of the repair
-        happens.
+        Protein around 1.6 g per kg of body weight covers most lifters, with up to 2.2 g/kg helpful in a calorie deficit. Sleep is when most of the
+        repair happens.
       </Topic>
 
       <Topic
         icon="scale"
         title="Body weight pace"
-        yours={rate !== null ? `Your 7 day average is changing ${rate > 0 ? '+' : ''}${rate.toFixed(2)}% a week.` : 'Weigh in a few mornings a week to see your trend.'}
+        yours={
+          rate !== null
+            ? `Your 7 day average is changing ${rate > 0 ? '+' : ''}${rate.toFixed(2)}% a week.`
+            : 'Weigh in a few mornings a week to see your trend.'
+        }
       >
-        Losing about 0.5 to 1% of body weight a week keeps strength and muscle; faster usually costs both. When building, about 0.25 to 0.5% a week keeps fat
-        gain modest. The app rewards progress on the 7 day average, so one odd morning never counts.
+        Losing about 0.5 to 1% of body weight a week keeps strength and muscle; faster usually costs both. When building, about 0.25 to 0.5% a week
+        keeps fat gain modest. The app rewards progress on the 7 day average, so one odd morning never counts.
       </Topic>
 
       <Topic icon="trophy" title="What counts as a record">
-        Heaviest weight, best estimated max (Epley, capped at 12 reps), more reps at a weight, a longer hold, or the same set at least 5% faster with at least a
-        second per rep. Your very first set of an exercise only sets the baseline.
+        Heaviest weight, best estimated max (Epley, capped at 12 reps), more reps at a weight, a longer hold, or the same set at least 5% faster with
+        at least a second per rep. Your very first set of an exercise only sets the baseline.
       </Topic>
 
       <View style={{ gap: spacing.xs }}>

@@ -49,13 +49,7 @@ export function roomLayout(options: { gate: 'sealed' | 'open' | 'boss'; variant:
   return pieces;
 }
 
-export function DungeonRoom({
-  layout,
-  torchColor,
-}: {
-  layout: PropPlacement[];
-  torchColor: string;
-}) {
+export function DungeonRoom({ layout, torchColor }: { layout: PropPlacement[]; torchColor: string }) {
   const pieces = useDungeonPieces(MODELS.dungeon);
   const objects = useMemo(
     () =>
@@ -75,12 +69,7 @@ export function DungeonRoom({
     <group>
       {objects}
       {torches.map((t, i) => (
-        <TorchLight
-          key={i}
-          seed={i + 1}
-          color={torchColor}
-          position={[t.position[0], t.position[1] + 0.85, t.position[2] + 0.42]}
-        />
+        <TorchLight key={i} seed={i + 1} color={torchColor} position={[t.position[0], t.position[1] + 0.85, t.position[2] + 0.42]} />
       ))}
     </group>
   );

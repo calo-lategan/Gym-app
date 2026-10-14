@@ -31,23 +31,21 @@ function session(dayKey: string, exercises: [string, number, number, number][], 
     startedAt: end - 3_600_000,
     endedAt: end,
     bodyweightKg: 80,
-    exercises: exercises.map(
-      ([exerciseId, sets, weight, reps], i): SessionExercise => ({
-        slotId: `s${i}`,
-        exerciseId,
-        targetSets: sets,
-        repMin: 8,
-        repMax: 12,
-        restSec: 90,
-        sets: Array.from({ length: sets }, (_, k) => ({
-          id: `${i}-${k}`,
-          weight,
-          reps,
-          startedAt: end - 60_000,
-          endedAt: end - 30_000,
-        })),
-      }),
-    ),
+    exercises: exercises.map(([exerciseId, sets, weight, reps], i): SessionExercise => ({
+      slotId: `s${i}`,
+      exerciseId,
+      targetSets: sets,
+      repMin: 8,
+      repMax: 12,
+      restSec: 90,
+      sets: Array.from({ length: sets }, (_, k) => ({
+        id: `${i}-${k}`,
+        weight,
+        reps,
+        startedAt: end - 60_000,
+        endedAt: end - 30_000,
+      })),
+    })),
   };
 }
 
@@ -79,7 +77,10 @@ describe('weeklySets', () => {
 describe('assessPlan', () => {
   it('warns when weekly volume for a muscle would pass its recovery limit', () => {
     const history = [
-      session(addDays(TODAY, -3), [['bench_press', 5, 60, 8], ['cable_fly', 5, 20, 12]]),
+      session(addDays(TODAY, -3), [
+        ['bench_press', 5, 60, 8],
+        ['cable_fly', 5, 20, 12],
+      ]),
       session(addDays(TODAY, -5), [['db_bench_press', 5, 24, 10]]),
     ];
     const ids = assessPlan(chestDay, history, TODAY, NOW).map((w) => w.id);
@@ -212,8 +213,15 @@ describe('weekly plan totals', () => {
     label: id,
     exercises: exercises.map(([exerciseId, sets], i) => ({ id: `${id}${i}`, exerciseId, sets, repMin: 8, repMax: 12, restSec: 90 })),
   });
-  const push = day('push', [['bench_press', 3], ['overhead_press', 3]]);
-  const pull = day('pull', [['barbell_row', 3], ['pull_up', 3], ['barbell_curl', 2]]);
+  const push = day('push', [
+    ['bench_press', 3],
+    ['overhead_press', 3],
+  ]);
+  const pull = day('pull', [
+    ['barbell_row', 3],
+    ['pull_up', 3],
+    ['barbell_curl', 2],
+  ]);
 
   it('cycles the program days across the sessions in a week', () => {
     const totals = weeklyPlanSets([push, pull], 3);

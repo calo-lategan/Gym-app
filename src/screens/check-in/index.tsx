@@ -29,7 +29,19 @@ const JOINTS: JointArea[] = ['shoulder', 'elbow', 'wrist', 'lower_back', 'hip', 
 const SORENESS_LABELS = ['', 'mild', 'moderate', 'severe'];
 const SORENESS_COLORS = [colors.seam, colors.torch, '#F07A3A', colors.ember];
 
-function ScaleRow({ label, value, onChange, labels, testID }: { label: string; value: number; onChange: (v: number) => void; labels: string[]; testID: string }) {
+function ScaleRow({
+  label,
+  value,
+  onChange,
+  labels,
+  testID,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  labels: string[];
+  testID: string;
+}) {
   return (
     <View style={{ gap: spacing.xs }}>
       <Text variant="label">{label}</Text>
@@ -79,12 +91,20 @@ export function CheckInScreen() {
 
   const [input, setInput] = useState<ReadinessInput>(
     previous
-      ? { sleepHours: previous.sleepHours, sleepQuality: previous.sleepQuality, energy: previous.energy, stress: previous.stress, soreness: previous.soreness, pain: previous.pain }
+      ? {
+          sleepHours: previous.sleepHours,
+          sleepQuality: previous.sleepQuality,
+          energy: previous.energy,
+          stress: previous.stress,
+          soreness: previous.soreness,
+          pain: previous.pain,
+        }
       : { sleepHours: 7.5, sleepQuality: 4, energy: 4, stress: 2, soreness: {}, pain: [] },
   );
   const result = useMemo(() => scoreReadiness(input), [input]);
   const preview = useMemo(
-    () => previewDay({ location: mode === 'home' ? 'home' : 'gym', recovery: mode === 'recovery', readiness: { input, result }, applyAdjustments: true }),
+    () =>
+      previewDay({ location: mode === 'home' ? 'home' : 'gym', recovery: mode === 'recovery', readiness: { input, result }, applyAdjustments: true }),
     [input, result, mode],
   );
   const [openedAt] = useState(() => Date.now());
@@ -105,7 +125,13 @@ export function CheckInScreen() {
   const begin = (applyAdjustments: boolean, recordCheckIn = true, recoveryOverride = false) => {
     if (recordCheckIn) {
       const outcome = submitCheckIn(input, result);
-      if (outcome.xp > 0) toast({ title: `+${outcome.xp} XP for checking in`, detail: outcome.vit ? 'Vitality +1 for steady check-ins' : undefined, icon: 'heart', tone: 'verdant' });
+      if (outcome.xp > 0)
+        toast({
+          title: `+${outcome.xp} XP for checking in`,
+          detail: outcome.vit ? 'Vitality +1 for steady check-ins' : undefined,
+          icon: 'heart',
+          tone: 'verdant',
+        });
     }
     const ok = startWorkout({
       location: mode === 'home' ? 'home' : 'gym',
@@ -123,19 +149,38 @@ export function CheckInScreen() {
     router.replace('/workout');
   };
 
-  const bandColor = result.band === 'ready' ? colors.verdant : result.band === 'steady' ? colors.torch : result.band === 'tired' ? '#F07A3A' : colors.ember;
+  const bandColor =
+    result.band === 'ready' ? colors.verdant : result.band === 'steady' ? colors.torch : result.band === 'tired' ? '#F07A3A' : colors.ember;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.abyss }}>
-      <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, paddingBottom: spacing.xxl }} contentInsetAdjustmentBehavior="automatic">
+      <ScrollView
+        contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, paddingBottom: spacing.xxl }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         <View style={{ gap: spacing.xs }}>
           <Text variant="display">How is your body today?</Text>
           <Text variant="subhead">Thirty seconds. It tunes today&apos;s session so you can train hard without digging a recovery hole.</Text>
         </View>
 
         <View style={{ gap: spacing.md }}>
-          <Stepper label="Hours slept" value={input.sleepHours} min={3} max={12} step={0.5} onChange={(v) => set('sleepHours', v)} format={(v) => `${v} h`} testID="sleep-hours" />
-          <ScaleRow label="Sleep quality" value={input.sleepQuality} onChange={(v) => set('sleepQuality', v)} labels={SCALE_5} testID="sleep-quality" />
+          <Stepper
+            label="Hours slept"
+            value={input.sleepHours}
+            min={3}
+            max={12}
+            step={0.5}
+            onChange={(v) => set('sleepHours', v)}
+            format={(v) => `${v} h`}
+            testID="sleep-hours"
+          />
+          <ScaleRow
+            label="Sleep quality"
+            value={input.sleepQuality}
+            onChange={(v) => set('sleepQuality', v)}
+            labels={SCALE_5}
+            testID="sleep-quality"
+          />
           <ScaleRow label="Energy" value={input.energy} onChange={(v) => set('energy', v)} labels={SCALE_5} testID="energy" />
           <ScaleRow label="Stress" value={input.stress} onChange={(v) => set('stress', v)} labels={STRESS_5} testID="stress" />
         </View>
@@ -186,7 +231,17 @@ export function CheckInScreen() {
 
         <Panel tone={result.band === 'ready' ? 'stone' : result.band === 'drained' ? 'ember' : 'torch'} testID="readiness-result">
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.ms }}>
-            <View style={{ width: 64, height: 64, borderRadius: 32, borderWidth: 3, borderColor: bandColor, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 32,
+                borderWidth: 3,
+                borderColor: bandColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Text variant="stat" color={bandColor}>
                 {result.score}
               </Text>
@@ -260,12 +315,20 @@ export function CheckInScreen() {
         </Panel>
       </ScrollView>
 
-      <View style={{ padding: spacing.md, paddingBottom: insets.bottom + spacing.md, gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.seam }}>
+      <View
+        style={{ padding: spacing.md, paddingBottom: insets.bottom + spacing.md, gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.seam }}
+      >
         {mode === 'recovery' ? (
           <Button title="Begin recovery rite" icon="heart" size="lg" onPress={() => begin(false)} testID="begin-recovery" />
         ) : result.band === 'drained' ? (
           <>
-            <Button title="Do a recovery rite instead" icon="heart" size="lg" onPress={() => begin(false, true, true)} testID="begin-recovery-instead" />
+            <Button
+              title="Do a recovery rite instead"
+              icon="heart"
+              size="lg"
+              onPress={() => begin(false, true, true)}
+              testID="begin-recovery-instead"
+            />
             <Button title="Train lighter anyway" variant="secondary" onPress={() => begin(true)} testID="begin-adjusted" />
           </>
         ) : preview && preview.changes.length > 0 ? (

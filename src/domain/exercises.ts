@@ -12,14 +12,7 @@ const def = (e: Def): Exercise => ({
 });
 
 /** Equipment that adds external load (as opposed to bars and benches you push against). */
-const LOADING_EQUIPMENT: EquipmentId[] = [
-  'barbell',
-  'dumbbells',
-  'kettlebell',
-  'cable',
-  'machines',
-  'bands',
-];
+const LOADING_EQUIPMENT: EquipmentId[] = ['barbell', 'dumbbells', 'kettlebell', 'cable', 'machines', 'bands'];
 
 /**
  * Exercise library. Body weight factors are approximate fractions of body
@@ -1597,9 +1590,7 @@ export const EXERCISES: Exercise[] = [
   }),
 ];
 
-export const EXERCISE_BY_ID: Record<string, Exercise> = Object.fromEntries(
-  EXERCISES.map((e) => [e.id, e]),
-);
+export const EXERCISE_BY_ID: Record<string, Exercise> = Object.fromEntries(EXERCISES.map((e) => [e.id, e]));
 
 export function getExercise(id: string): Exercise {
   const exercise = EXERCISE_BY_ID[id];

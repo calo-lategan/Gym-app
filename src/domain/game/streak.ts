@@ -2,9 +2,7 @@ import { addDays, daysBetween } from '../dates';
 import { isTrainingDay } from '../schedule';
 import type { DayKey, Hero, Schedule } from '../types';
 
-export type StreakEvent =
-  | { type: 'shield_used'; day: DayKey }
-  | { type: 'streak_lost'; day: DayKey; lost: number };
+export type StreakEvent = { type: 'shield_used'; day: DayKey } | { type: 'streak_lost'; day: DayKey; lost: number };
 
 /**
  * Settles every scheduled day between the last evaluated day and yesterday.

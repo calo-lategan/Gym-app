@@ -1,4 +1,4 @@
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -12,6 +12,7 @@ import { dragonForTier } from '@/domain/game/dragon';
 import { describeBonus } from '@/domain/game/loot';
 import { SLOT_LABELS } from '@/domain/game/progression';
 import type { Item } from '@/domain/types';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { setGoal, slayDragon } from '@/state/actions';
@@ -34,14 +35,24 @@ export function SlayScreen() {
       <PageScroll testID="slay-claimed" padTop={spacing.xl}>
         <Animated.View entering={ZoomIn.springify().damping(10)} style={{ alignItems: 'center', gap: spacing.sm }}>
           <Icon name="crown" size={56} color={colors.torchHigh} />
-          <Text style={{ fontFamily: fonts.display, fontSize: 40, lineHeight: 44, color: colors.torchHigh, textAlign: 'center' }}>The hoard is yours</Text>
+          <Text style={{ fontFamily: fonts.display, fontSize: 40, lineHeight: 44, color: colors.torchHigh, textAlign: 'center' }}>
+            The hoard is yours
+          </Text>
           <Text variant="subhead" align="center">
             You now carry the title {claimed.title}, with 500 gold and a heap of experience.
           </Text>
         </Animated.View>
         <Animated.View
           entering={FadeInDown.delay(400).springify()}
-          style={{ borderRadius: radius.lg, borderWidth: 2, borderColor: color, padding: spacing.md, gap: 6, backgroundColor: `${color}14`, boxShadow: `0 0 34px ${color}88` }}
+          style={{
+            borderRadius: radius.lg,
+            borderWidth: 2,
+            borderColor: color,
+            padding: spacing.md,
+            gap: 6,
+            backgroundColor: `${color}14`,
+            boxShadow: `0 0 34px ${color}88`,
+          }}
         >
           <Text variant="label" color={color}>
             Legendary {SLOT_LABELS[claimed.item.slot].toLowerCase()}, equipped
@@ -56,7 +67,7 @@ export function SlayScreen() {
           <Text variant="body">
             {claimed.next.name}, {claimed.next.epithet}, has taken the deepest hall. Its ward is whole again, bound to your new goal.
           </Text>
-          <Button title="Return to camp" icon="camp" size="lg" onPress={() => router.back()} testID="slay-done" />
+          <Button title="Return to camp" icon="camp" size="lg" onPress={() => goBack('/')} testID="slay-done" />
         </Animated.View>
       </PageScroll>
     );
@@ -67,7 +78,7 @@ export function SlayScreen() {
       const tier = dragon?.tier ?? 1;
       const result = slayDragon(goal);
       if (!result) {
-        router.back();
+        goBack('/');
         return;
       }
       play('lootLegendary', 1);
@@ -78,7 +89,7 @@ export function SlayScreen() {
     setGoal(goal);
     play('gateOpen', 0.7);
     haptics.success();
-    router.back();
+    goBack('/');
   };
 
   const next = dragonForTier((dragon?.tier ?? 1) + 1);

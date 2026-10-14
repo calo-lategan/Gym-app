@@ -29,7 +29,21 @@ export const paletteForTier = (tier: number) => DRAGON_PALETTES[(Math.max(1, tie
 const lambert = (color: string, side: THREE.Side = THREE.FrontSide) => new THREE.MeshLambertMaterial({ color, flatShading: true, side });
 
 /** A tapered cylinder between two points. */
-function Limb({ from, to, r1, r2, material, segments = 7 }: { from: V3; to: V3; r1: number; r2: number; material: THREE.Material; segments?: number }) {
+function Limb({
+  from,
+  to,
+  r1,
+  r2,
+  material,
+  segments = 7,
+}: {
+  from: V3;
+  to: V3;
+  r1: number;
+  r2: number;
+  material: THREE.Material;
+  segments?: number;
+}) {
   const a = new THREE.Vector3(...from);
   const b = new THREE.Vector3(...to);
   const dir = b.clone().sub(a);
@@ -46,7 +60,12 @@ function Limb({ from, to, r1, r2, material, segments = 7 }: { from: V3; to: V3; 
 const WING = {
   shoulder: new THREE.Vector3(0, 0, 0),
   elbow: new THREE.Vector3(1.5, 0.85, -0.35),
-  tips: [new THREE.Vector3(3.4, 1.55, -0.9), new THREE.Vector3(3.2, 0.25, -1.3), new THREE.Vector3(2.5, -0.65, -1.4), new THREE.Vector3(1.45, -0.75, -1.15)],
+  tips: [
+    new THREE.Vector3(3.4, 1.55, -0.9),
+    new THREE.Vector3(3.2, 0.25, -1.3),
+    new THREE.Vector3(2.5, -0.65, -1.4),
+    new THREE.Vector3(1.45, -0.75, -1.15),
+  ],
   base: new THREE.Vector3(0.15, -0.55, -0.95),
 };
 
@@ -155,7 +174,17 @@ export interface DragonProps {
  * It breathes, sways and flexes its wings; roars rear the head and open the
  * jaw with fire in the throat; death topples it onto its side.
  */
-export function Dragon({ tier, position = [0, 0, 0], rotationY = 0, scale = 1, health, roarKey = 0, hurtKey = 0, dead = false, onPointerDown }: DragonProps) {
+export function Dragon({
+  tier,
+  position = [0, 0, 0],
+  rotationY = 0,
+  scale = 1,
+  health,
+  roarKey = 0,
+  hurtKey = 0,
+  dead = false,
+  onPointerDown,
+}: DragonProps) {
   const palette = paletteForTier(tier);
   const m = useMemo(
     () => ({
@@ -165,8 +194,22 @@ export function Dragon({ tier, position = [0, 0, 0], rotationY = 0, scale = 1, h
       membrane: lambert(palette.membrane, THREE.DoubleSide),
       dark: lambert('#1a1412'),
       eye: new THREE.MeshBasicMaterial({ color: new THREE.Color(palette.glow).multiplyScalar(1.6) }),
-      glow: new THREE.SpriteMaterial({ map: getGlowTexture(), color: palette.glow, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.85 }),
-      fire: new THREE.SpriteMaterial({ map: getGlowTexture(), color: new THREE.Color(palette.glow).multiplyScalar(1.8), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 }),
+      glow: new THREE.SpriteMaterial({
+        map: getGlowTexture(),
+        color: palette.glow,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        opacity: 0.85,
+      }),
+      fire: new THREE.SpriteMaterial({
+        map: getGlowTexture(),
+        color: new THREE.Color(palette.glow).multiplyScalar(1.8),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        opacity: 0,
+      }),
     }),
     [palette],
   );
@@ -187,7 +230,7 @@ export function Dragon({ tier, position = [0, 0, 0], rotationY = 0, scale = 1, h
     live.current = m;
   }, [m]);
 
-  const timing = useRef({ roarKey, roarAt: -99, hurtKey, hurtAt: -99, deadAt: dead ? -99 : null as number | null });
+  const timing = useRef({ roarKey, roarAt: -99, hurtKey, hurtAt: -99, deadAt: dead ? -99 : (null as number | null) });
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;

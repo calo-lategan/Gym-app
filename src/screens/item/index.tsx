@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { Alert, Platform, View } from 'react-native';
 
 import { Button } from '@/components/button';
@@ -8,6 +8,7 @@ import { Text } from '@/components/text';
 import { parseDayKey } from '@/domain/dates';
 import { describeBonus, RARITY_LABELS } from '@/domain/game/loot';
 import { salvageValue, SLOT_LABELS } from '@/domain/game/progression';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { equipItem, salvageItem } from '@/state/actions';
@@ -36,7 +37,7 @@ export function ItemScreen() {
       salvageItem(item.id);
       play('coin', 0.8);
       haptics.success();
-      router.back();
+      goBack('/hero');
     };
     if (Platform.OS === 'web') {
       go();
@@ -50,7 +51,17 @@ export function ItemScreen() {
 
   return (
     <PageScroll testID="item-screen" padTop={spacing.lg}>
-      <View style={{ borderRadius: radius.lg, borderWidth: 2, borderColor: color, padding: spacing.md, gap: spacing.sm, backgroundColor: `${color}12`, boxShadow: `0 0 30px ${color}55` }}>
+      <View
+        style={{
+          borderRadius: radius.lg,
+          borderWidth: 2,
+          borderColor: color,
+          padding: spacing.md,
+          gap: spacing.sm,
+          backgroundColor: `${color}12`,
+          boxShadow: `0 0 30px ${color}55`,
+        }}
+      >
         <Text variant="label" color={color}>
           {RARITY_LABELS[item.rarity]} {SLOT_LABELS[item.slot].toLowerCase()}
         </Text>
@@ -76,7 +87,11 @@ export function ItemScreen() {
 
       {diff !== null && worn ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Icon name={diff > 0 ? 'up' : diff < 0 ? 'down' : 'swap'} size={18} color={diff > 0 ? colors.verdant : diff < 0 ? colors.ember : colors.ash} />
+          <Icon
+            name={diff > 0 ? 'up' : diff < 0 ? 'down' : 'swap'}
+            size={18}
+            color={diff > 0 ? colors.verdant : diff < 0 ? colors.ember : colors.ash}
+          />
           <Text variant="body" style={{ flex: 1 }}>
             {diff === 0 ? 'Same power as' : `${Math.abs(diff)} ${diff > 0 ? 'more' : 'less'} power than`} your {worn.name}.
           </Text>
@@ -97,7 +112,7 @@ export function ItemScreen() {
               equipItem(item.id);
               play('statUp', 0.7);
               haptics.success();
-              router.back();
+              goBack('/hero');
             }}
             testID="item-equip"
           />

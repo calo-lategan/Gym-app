@@ -4,7 +4,17 @@ import { rarityColors } from '@/theme';
 
 /** Every prop mesh on each KayKit hero; only the ones in the loadout are shown. */
 const PROP_MESHES: Record<HeroClass, string[]> = {
-  knight: ['1H_Sword_Offhand', 'Badge_Shield', 'Rectangle_Shield', 'Round_Shield', 'Spike_Shield', '1H_Sword', '2H_Sword', 'Knight_Helmet', 'Knight_Cape'],
+  knight: [
+    '1H_Sword_Offhand',
+    'Badge_Shield',
+    'Rectangle_Shield',
+    'Round_Shield',
+    'Spike_Shield',
+    '1H_Sword',
+    '2H_Sword',
+    'Knight_Helmet',
+    'Knight_Cape',
+  ],
   barbarian: ['1H_Axe_Offhand', 'Barbarian_Round_Shield', '1H_Axe', '2H_Axe', 'Mug', 'Barbarian_Hat', 'Barbarian_Cape'],
   mage: ['Spellbook', 'Spellbook_open', '1H_Wand', '2H_Staff', 'Mage_Hat', 'Mage_Cape'],
   rogue: ['Knife_Offhand', '1H_Crossbow', '2H_Crossbow', 'Knife', 'Throwable', 'Rogue_Cape'],
@@ -78,9 +88,7 @@ export function heroLoadout(hero: Hero, options: { resting?: boolean } = {}): Lo
       weaponMeshes = twoHanded ? ['2H_Crossbow'] : ['Knife'];
       if (!twoHanded) visible.add('Knife_Offhand');
       if (armor) visible.add('Rogue_Cape');
-      attacks = twoHanded
-        ? ['1H_Ranged_Shoot']
-        : ['Dualwield_Melee_Attack_Stab', 'Dualwield_Melee_Attack_Slice', 'Dualwield_Melee_Attack_Chop'];
+      attacks = twoHanded ? ['1H_Ranged_Shoot'] : ['Dualwield_Melee_Attack_Stab', 'Dualwield_Melee_Attack_Slice', 'Dualwield_Melee_Attack_Chop'];
       finisher = twoHanded ? '1H_Ranged_Shoot' : 'Dualwield_Melee_Attack_Chop';
       break;
   }

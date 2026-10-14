@@ -50,7 +50,7 @@ export function useDragonProgress(): { goal: Goal | null; current: number | null
     if (!dragon) return { goal: null, current: null, progress: 0 };
     const goal = dragon.goal;
     let current: number | null = null;
-    if (goal.kind === 'bodyweight') current = averageWeight(weighIns, today) ?? (weighIns.at(-1)?.kg ?? null);
+    if (goal.kind === 'bodyweight') current = averageWeight(weighIns, today) ?? weighIns.at(-1)?.kg ?? null;
     if (goal.kind === 'lift') current = goal.exerciseId ? (records[goal.exerciseId]?.bestE1rm ?? null) : null;
     if (goal.kind === 'sessions') current = sessions.filter((s) => s.endedAt && s.startedAt >= goal.createdAt).length;
     return { goal, current, progress: goalProgress(goal, current) };

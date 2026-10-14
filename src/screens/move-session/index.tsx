@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 
@@ -12,6 +11,7 @@ import { moveOptions } from '@/domain/reminders';
 import { formatClock } from '@/domain/schedule';
 import type { ClockTime } from '@/domain/types';
 import { useTodayStatus } from '@/hooks/use-game-data';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { clearTodayOverride, moveSessionToday, restToday, trainToday } from '@/state/actions';
 import { useGame } from '@/state/stores';
@@ -29,7 +29,7 @@ export function MoveSessionScreen() {
     moveSessionToday(time);
     haptics.success();
     toast({ title: `Quest set for ${formatClock(time, use24h)}`, detail: 'Your reminder moved with it.', icon: 'clock', tone: 'torch' });
-    router.back();
+    goBack('/');
   };
 
   return (
@@ -46,7 +46,13 @@ export function MoveSessionScreen() {
       <Section title="Quick picks">
         <ChipRow>
           {options.map((o) => (
-            <Chip key={o.label} label={`${o.label}, ${formatClock(o, use24h)}`} selected={false} onPress={() => moveTo({ hour: o.hour, minute: o.minute })} testID={`move-${o.label}`} />
+            <Chip
+              key={o.label}
+              label={`${o.label}, ${formatClock(o, use24h)}`}
+              selected={false}
+              onPress={() => moveTo({ hour: o.hour, minute: o.minute })}
+              testID={`move-${o.label}`}
+            />
           ))}
         </ChipRow>
       </Section>
@@ -66,7 +72,7 @@ export function MoveSessionScreen() {
               restToday();
               haptics.success();
               toast({ title: 'Today is a rest day now', detail: 'Your session moved to your next free day.', icon: 'bed', tone: 'verdant' });
-              router.back();
+              goBack('/');
             }}
             testID="move-rest-today"
           />
@@ -79,7 +85,7 @@ export function MoveSessionScreen() {
           variant="ghost"
           onPress={() => {
             clearTodayOverride();
-            router.back();
+            goBack('/');
           }}
           testID="move-reset"
         />

@@ -78,11 +78,7 @@ export function findAlternatives(
 }
 
 /** Best single substitute, or null when nothing fits the equipment. */
-export function bestSubstitute(
-  exerciseId: string,
-  equipment: readonly EquipmentId[],
-  exclude: readonly string[] = [],
-): Exercise | null {
+export function bestSubstitute(exerciseId: string, equipment: readonly EquipmentId[], exclude: readonly string[] = []): Exercise | null {
   const original = getExercise(exerciseId);
   if (isAvailable(original, equipment) && !exclude.includes(exerciseId)) return original;
   return findAlternatives(exerciseId, equipment, { exclude, limit: 1 })[0]?.exercise ?? null;

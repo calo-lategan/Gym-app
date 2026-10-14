@@ -40,7 +40,9 @@ function ExerciseRow({ dayId, planned, index, count }: { dayId: string; planned:
           style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, minHeight: 48 }}
           testID={`day-exercise-${index}`}
         >
-          <View style={{ width: 28, height: 28, borderRadius: radius.sm, backgroundColor: colors.slate, alignItems: 'center', justifyContent: 'center' }}>
+          <View
+            style={{ width: 28, height: 28, borderRadius: radius.sm, backgroundColor: colors.slate, alignItems: 'center', justifyContent: 'center' }}
+          >
             <Text variant="label">{index + 1}</Text>
           </View>
           <View style={{ flex: 1 }}>
@@ -55,11 +57,29 @@ function ExerciseRow({ dayId, planned, index, count }: { dayId: string; planned:
         {open ? (
           <Animated.View entering={FadeIn.duration(180)} style={{ gap: spacing.ms }}>
             <Text variant="caption">
-              {exercise.primary.map((m) => MUSCLE_LABELS[m]).join(', ')}. {exercise.equipment.length ? `Needs ${describeEquipment(exercise.equipment)}.` : 'No equipment needed.'}
+              {exercise.primary.map((m) => MUSCLE_LABELS[m]).join(', ')}.{' '}
+              {exercise.equipment.length ? `Needs ${describeEquipment(exercise.equipment)}.` : 'No equipment needed.'}
             </Text>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-              <Stepper label="Sets" value={planned.sets} min={1} max={10} onChange={(sets) => updatePlanned(dayId, planned.id, { sets })} compact testID={`sets-${index}`} />
-              <Stepper label="Rest" value={planned.restSec} min={15} max={600} step={15} format={formatRest} onChange={(restSec) => updatePlanned(dayId, planned.id, { restSec })} compact />
+              <Stepper
+                label="Sets"
+                value={planned.sets}
+                min={1}
+                max={10}
+                onChange={(sets) => updatePlanned(dayId, planned.id, { sets })}
+                compact
+                testID={`sets-${index}`}
+              />
+              <Stepper
+                label="Rest"
+                value={planned.restSec}
+                min={15}
+                max={600}
+                step={15}
+                format={formatRest}
+                onChange={(restSec) => updatePlanned(dayId, planned.id, { restSec })}
+                compact
+              />
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
               <Stepper
@@ -92,7 +112,12 @@ function ExerciseRow({ dayId, planned, index, count }: { dayId: string; planned:
                 testID={`swap-${index}`}
               />
               <IconButton icon="up" label="Move up" onPress={() => moveInDay(dayId, planned.id, -1)} color={index === 0 ? colors.dim : colors.bone} />
-              <IconButton icon="down" label="Move down" onPress={() => moveInDay(dayId, planned.id, 1)} color={index === count - 1 ? colors.dim : colors.bone} />
+              <IconButton
+                icon="down"
+                label="Move down"
+                onPress={() => moveInDay(dayId, planned.id, 1)}
+                color={index === count - 1 ? colors.dim : colors.bone}
+              />
               <IconButton icon="trash" label={`Remove ${exercise.name}`} onPress={() => removeFromDay(dayId, planned.id)} color={colors.ember} />
             </View>
           </Animated.View>
@@ -124,15 +149,19 @@ export function DayEditorScreen() {
         <Text variant="subhead">
           {day.exercises.length} exercises, {sets} sets, about {estimateMinutes(sets, rest)} min
         </Text>
-        <Text variant="caption">
-          Works {hit.map((m) => `${MUSCLE_LABELS[m].toLowerCase()} (${Math.round(muscles[m] * 2) / 2})`).join(', ')}.
-        </Text>
+        <Text variant="caption">Works {hit.map((m) => `${MUSCLE_LABELS[m].toLowerCase()} (${Math.round(muscles[m] * 2) / 2})`).join(', ')}.</Text>
       </View>
       <Section title="Exercises" detail="Tap one to change sets, reps or rest, or to swap it for kit you have.">
         {day.exercises.map((planned, i) => (
           <ExerciseRow key={planned.id} dayId={day.id} planned={planned} index={i} count={day.exercises.length} />
         ))}
-        <Button title="Add exercise" icon="plus" variant="secondary" onPress={() => router.push(`/exercise-picker?dayId=${day.id}`)} testID="day-add-exercise" />
+        <Button
+          title="Add exercise"
+          icon="plus"
+          variant="secondary"
+          onPress={() => router.push(`/exercise-picker?dayId=${day.id}`)}
+          testID="day-add-exercise"
+        />
       </Section>
     </PageScroll>
   );

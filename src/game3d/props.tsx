@@ -9,7 +9,17 @@ import { Embers, getGlowTexture, Glow, TorchLight } from './effects';
 import { useDungeonPieces } from './models';
 
 /** A dungeon prop cloned by name from the merged model. */
-export function Prop({ piece, position, rotationY = 0, scale = 1 }: { piece: string; position: [number, number, number]; rotationY?: number; scale?: number }) {
+export function Prop({
+  piece,
+  position,
+  rotationY = 0,
+  scale = 1,
+}: {
+  piece: string;
+  position: [number, number, number];
+  rotationY?: number;
+  scale?: number;
+}) {
   const pieces = useDungeonPieces(MODELS.dungeon);
   const object = useMemo(() => {
     const source = pieces.get(piece);

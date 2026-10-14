@@ -41,9 +41,7 @@ describe('findAlternatives', () => {
 
   it('falls back to body weight when no equipment is available', () => {
     const alts = findAlternatives('lat_pulldown', []);
-    expect(alts.map((a) => a.exercise.id)).toEqual(
-      expect.arrayContaining(['towel_door_row', 'table_row']),
-    );
+    expect(alts.map((a) => a.exercise.id)).toEqual(expect.arrayContaining(['towel_door_row', 'table_row']));
   });
 
   it('never swaps a timed exercise for a rep exercise', () => {
@@ -64,16 +62,4 @@ describe('bestSubstitute', () => {
   });
 });
 
-const ALL: EquipmentId[] = [
-  'barbell',
-  'rack',
-  'bench',
-  'dumbbells',
-  'kettlebell',
-  'cable',
-  'machines',
-  'pullup_bar',
-  'dip_bars',
-  'bands',
-  'cardio',
-];
+const ALL: EquipmentId[] = ['barbell', 'rack', 'bench', 'dumbbells', 'kettlebell', 'cable', 'machines', 'pullup_bar', 'dip_bars', 'bands', 'cardio'];

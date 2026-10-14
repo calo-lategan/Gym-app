@@ -34,7 +34,17 @@ export function LevelCrest({ level, size = 54 }: { level: number; size?: number 
   );
 }
 
-export function Counter({ icon, value, color, label }: { icon: 'camp' | 'coin' | 'potion' | 'star'; value: string | number; color: string; label: string }) {
+export function Counter({
+  icon,
+  value,
+  color,
+  label,
+}: {
+  icon: 'camp' | 'coin' | 'potion' | 'star';
+  value: string | number;
+  color: string;
+  label: string;
+}) {
   return (
     <View accessibilityLabel={`${label}: ${value}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
       <Icon name={icon} size={16} color={color} />

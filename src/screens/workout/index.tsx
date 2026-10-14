@@ -2,7 +2,7 @@ import { useKeepAwake } from 'expo-keep-awake';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, ScrollView, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, FadeOutUp, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeOut, FadeOutUp, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, IconButton } from '@/components/button';
@@ -164,7 +164,10 @@ export function WorkoutScreen() {
       float(`+${isBoss ? 30 : 10} XP`, colors.torchHigh);
       if (result.exerciseDone) {
         setTimeout(() => play('monsterDeath', 0.8), 250);
-        float(isBoss ? (result.bossDefeated ? 'Boss defeated' : 'The boss endures') : 'Foe defeated', result.bossDefeated || !isBoss ? colors.verdant : colors.ember);
+        float(
+          isBoss ? (result.bossDefeated ? 'Boss defeated' : 'The boss endures') : 'Foe defeated',
+          result.bossDefeated || !isBoss ? colors.verdant : colors.ember,
+        );
       }
     }, 260);
     if (crit) {
@@ -190,14 +193,10 @@ export function WorkoutScreen() {
       if (outcome) router.replace('/victory');
     };
     if (totalDone < needed) {
-      Alert.alert(
-        'Finish early?',
-        `You have ${totalDone} of ${needed} sets needed to clear the room. You still keep the XP for every set.`,
-        [
-          { text: 'Keep fighting', style: 'cancel' },
-          { text: 'Finish anyway', onPress: done },
-        ],
-      );
+      Alert.alert('Finish early?', `You have ${totalDone} of ${needed} sets needed to clear the room. You still keep the XP for every set.`, [
+        { text: 'Keep fighting', style: 'cancel' },
+        { text: 'Finish anyway', onPress: done },
+      ]);
       if (process.env.EXPO_OS === 'web') done();
       return;
     }
@@ -235,9 +234,25 @@ export function WorkoutScreen() {
             cheerKey={cheerKey}
           />
         ) : (
-          <View style={{ flex: 1, backgroundColor: colors.stone, experimental_backgroundImage: `radial-gradient(circle at 50% 120%, ${zone.light}55 0%, transparent 70%)` }} />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: colors.stone,
+              experimental_backgroundImage: `radial-gradient(circle at 50% 120%, ${zone.light}55 0%, transparent 70%)`,
+            }}
+          />
         )}
-        <View style={{ position: 'absolute', top: insets.top + spacing.xs, left: spacing.sm, right: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: insets.top + spacing.xs,
+            left: spacing.sm,
+            right: spacing.sm,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+          }}
+        >
           <IconButton icon="close" label="Leave workout" tone="filled" onPress={onQuit} testID="quit-workout" />
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text variant="label" color={colors.bone} style={{ textShadowColor: '#000', textShadowRadius: 6 }}>
@@ -268,14 +283,21 @@ export function WorkoutScreen() {
         <View pointerEvents="none" style={{ position: 'absolute', right: '10%', top: '26%', alignItems: 'flex-end', gap: 2 }}>
           {floaters.map((f) => (
             <Animated.View key={f.id} entering={ZoomIn.duration(180)} exiting={FadeOutUp.duration(500)}>
-              <Text style={{ fontFamily: fonts.display, fontSize: 26, lineHeight: 30, color: f.color, textShadowColor: '#000', textShadowRadius: 8 }}>{f.text}</Text>
+              <Text style={{ fontFamily: fonts.display, fontSize: 26, lineHeight: 30, color: f.color, textShadowColor: '#000', textShadowRadius: 8 }}>
+                {f.text}
+              </Text>
             </Animated.View>
           ))}
         </View>
       </View>
 
       {/* Exercise strip */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={{ gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}
+      >
         {session.exercises.map((e, i) => {
           const done = e.sets.length >= e.targetSets;
           const selected = i === index;
@@ -327,7 +349,8 @@ export function WorkoutScreen() {
           </Text>
           {lastTime.length > 0 && !isBoss ? (
             <Text variant="caption">
-              Last time: {lastTime.map((s) => (s.weight > 0 ? `${displayWeightValue(s.weight, unit)}×${s.reps}` : `${s.reps}${timed ? 's' : ''}`)).join(', ')}
+              Last time:{' '}
+              {lastTime.map((s) => (s.weight > 0 ? `${displayWeightValue(s.weight, unit)}×${s.reps}` : `${s.reps}${timed ? 's' : ''}`)).join(', ')}
             </Text>
           ) : null}
           {suggestion && !isBoss ? (
@@ -382,10 +405,32 @@ export function WorkoutScreen() {
                     <View style={{ flexDirection: 'row', gap: spacing.sm, paddingTop: spacing.sm, alignItems: 'center' }}>
                       <Button title="−1" variant="secondary" size="sm" onPress={() => editSet(index, s.id, { reps: Math.max(0, s.reps - 1) })} />
                       <Button title="+1" variant="secondary" size="sm" onPress={() => editSet(index, s.id, { reps: s.reps + 1 })} />
-                      {loaded ? <Button title={`−${weightStep}`} variant="secondary" size="sm" onPress={() => editSet(index, s.id, { weight: Math.max(0, s.weight - fromDisplayWeight(weightStep, unit)) })} /> : null}
-                      {loaded ? <Button title={`+${weightStep}`} variant="secondary" size="sm" onPress={() => editSet(index, s.id, { weight: s.weight + fromDisplayWeight(weightStep, unit) })} /> : null}
+                      {loaded ? (
+                        <Button
+                          title={`−${weightStep}`}
+                          variant="secondary"
+                          size="sm"
+                          onPress={() => editSet(index, s.id, { weight: Math.max(0, s.weight - fromDisplayWeight(weightStep, unit)) })}
+                        />
+                      ) : null}
+                      {loaded ? (
+                        <Button
+                          title={`+${weightStep}`}
+                          variant="secondary"
+                          size="sm"
+                          onPress={() => editSet(index, s.id, { weight: s.weight + fromDisplayWeight(weightStep, unit) })}
+                        />
+                      ) : null}
                       <View style={{ flex: 1 }} />
-                      <IconButton icon="trash" label="Delete set" color={colors.ember} onPress={() => { deleteSet(index, s.id); setEditing(null); }} />
+                      <IconButton
+                        icon="trash"
+                        label="Delete set"
+                        color={colors.ember}
+                        onPress={() => {
+                          deleteSet(index, s.id);
+                          setEditing(null);
+                        }}
+                      />
                     </View>
                   ) : null}
                 </View>
@@ -406,7 +451,17 @@ export function WorkoutScreen() {
       </ScrollView>
 
       {/* Action area */}
-      <View style={{ paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: insets.bottom + spacing.sm, gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.seam, backgroundColor: colors.stone }}>
+      <View
+        style={{
+          paddingHorizontal: spacing.md,
+          paddingTop: spacing.sm,
+          paddingBottom: insets.bottom + spacing.sm,
+          gap: spacing.sm,
+          borderTopWidth: 1,
+          borderTopColor: colors.seam,
+          backgroundColor: colors.stone,
+        }}
+      >
         {jump && !running && !exerciseDone ? (
           <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }} testID="load-warning">
             <Icon name="warning" size={16} color={colors.torch} />
@@ -425,7 +480,16 @@ export function WorkoutScreen() {
               </Text>
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-              <Stepper label={timed ? 'Seconds' : 'Reps'} value={draft.reps} min={0} max={timed ? 900 : 100} step={timed ? 5 : 1} onChange={(reps) => setDraft((d) => ({ ...d, reps }))} testID="reps" compact />
+              <Stepper
+                label={timed ? 'Seconds' : 'Reps'}
+                value={draft.reps}
+                min={0}
+                max={timed ? 900 : 100}
+                step={timed ? 5 : 1}
+                onChange={(reps) => setDraft((d) => ({ ...d, reps }))}
+                testID="reps"
+                compact
+              />
             </View>
             <Button title="End set" icon="stop" size="xl" onPress={onEnd} testID="end-set" sound={null} />
             <Button title="Cancel set" variant="ghost" size="sm" onPress={cancelSet} />
@@ -450,9 +514,25 @@ export function WorkoutScreen() {
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
               <Button title="+30 s" variant="secondary" style={{ flex: 1 }} onPress={() => extendRest(30)} testID="rest-plus" />
-              <Button title="Skip rest" variant="secondary" style={{ flex: 1 }} onPress={() => { void cancelRestAlert(); skipRest(); }} testID="skip-rest" />
+              <Button
+                title="Skip rest"
+                variant="secondary"
+                style={{ flex: 1 }}
+                onPress={() => {
+                  void cancelRestAlert();
+                  skipRest();
+                }}
+                testID="skip-rest"
+              />
             </View>
-            <Button title={exerciseDone && nextUp ? `Next: ${getExercise(nextUp.exerciseId).name}` : 'Start next set'} icon="play" size="lg" onPress={onStart} testID="start-set" sound={null} />
+            <Button
+              title={exerciseDone && nextUp ? `Next: ${getExercise(nextUp.exerciseId).name}` : 'Start next set'}
+              icon="play"
+              size="lg"
+              onPress={onStart}
+              testID="start-set"
+              sound={null}
+            />
           </>
         ) : (
           <>
@@ -469,7 +549,16 @@ export function WorkoutScreen() {
                   compact
                 />
               ) : null}
-              <Stepper label={timed ? 'Seconds' : 'Reps'} value={draft.reps} min={0} max={timed ? 900 : 100} step={timed ? 5 : 1} onChange={(reps) => setDraft((d) => ({ ...d, reps }))} testID="reps" compact />
+              <Stepper
+                label={timed ? 'Seconds' : 'Reps'}
+                value={draft.reps}
+                min={0}
+                max={timed ? 900 : 100}
+                step={timed ? 5 : 1}
+                onChange={(reps) => setDraft((d) => ({ ...d, reps }))}
+                testID="reps"
+                compact
+              />
             </View>
             {exerciseDone ? (
               <Button
@@ -483,7 +572,14 @@ export function WorkoutScreen() {
                 testID="next-exercise"
               />
             ) : (
-              <Button title={isBoss ? 'Face the boss' : `Start set ${ex.sets.length + 1}`} icon="play" size="xl" onPress={onStart} testID="start-set" sound={null} />
+              <Button
+                title={isBoss ? 'Face the boss' : `Start set ${ex.sets.length + 1}`}
+                icon="play"
+                size="xl"
+                onPress={onStart}
+                testID="start-set"
+                sound={null}
+              />
             )}
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
               <Button title="Log without timer" variant="ghost" size="sm" style={{ flex: 1 }} onPress={onEnd} testID="quick-log" sound={null} />
@@ -494,16 +590,29 @@ export function WorkoutScreen() {
       </View>
 
       {prBanner ? (
-        <Animated.View entering={ZoomIn.springify().damping(12)} exiting={FadeOut.duration(250)} pointerEvents="none" style={{ position: 'absolute', top: '18%', left: spacing.lg, right: spacing.lg, alignItems: 'center' }}>
-          <View style={{ backgroundColor: colors.glass, borderRadius: radius.lg, borderWidth: 2, borderColor: colors.torch, padding: spacing.md, alignItems: 'center', boxShadow: '0 0 40px rgba(242,169,59,0.55)' }}>
+        <Animated.View
+          entering={ZoomIn.springify().damping(12)}
+          exiting={FadeOut.duration(250)}
+          pointerEvents="none"
+          style={{ position: 'absolute', top: '18%', left: spacing.lg, right: spacing.lg, alignItems: 'center' }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.glass,
+              borderRadius: radius.lg,
+              borderWidth: 2,
+              borderColor: colors.torch,
+              padding: spacing.md,
+              alignItems: 'center',
+              boxShadow: '0 0 40px rgba(242,169,59,0.55)',
+            }}
+          >
             <Icon name="trophy" size={34} color={colors.torchHigh} />
             <Text style={{ fontFamily: fonts.display, fontSize: 34, lineHeight: 40, color: colors.torchHigh }}>New record</Text>
             {prBanner.map((p) => (
-              <Animated.View key={`${p.kind}-${p.setId}`} entering={FadeIn.delay(150)}>
-                <Text variant="bodyStrong" align="center">
-                  {PR_LABELS[p.kind]}
-                </Text>
-              </Animated.View>
+              <Text key={`${p.kind}-${p.setId}`} variant="bodyStrong" align="center">
+                {PR_LABELS[p.kind]}
+              </Text>
             ))}
           </View>
         </Animated.View>

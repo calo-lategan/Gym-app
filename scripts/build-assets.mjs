@@ -244,24 +244,29 @@ for (const name of PROPS) {
           const acc = prim.getAttribute(semantic);
           p.setAttribute(
             semantic,
-            dungeon.createAccessor().setType(acc.getType()).setArray(acc.getArray().slice()).setNormalized(acc.getNormalized()).setBuffer(dungeon.getRoot().listBuffers()[0]),
+            dungeon
+              .createAccessor()
+              .setType(acc.getType())
+              .setArray(acc.getArray().slice())
+              .setNormalized(acc.getNormalized())
+              .setBuffer(dungeon.getRoot().listBuffers()[0]),
           );
         }
         const indices = prim.getIndices();
-        if (indices) p.setIndices(dungeon.createAccessor().setType('SCALAR').setArray(indices.getArray().slice()).setBuffer(dungeon.getRoot().listBuffers()[0]));
+        if (indices)
+          p.setIndices(dungeon.createAccessor().setType('SCALAR').setArray(indices.getArray().slice()).setBuffer(dungeon.getRoot().listBuffers()[0]));
         const mat = prim.getMaterial();
         if (mat) {
           const key = mat.getName() || 'texture';
           if (!materials.has(key)) {
             const tex = mat.getBaseColorTexture();
             if (tex && !sharedTexture) {
-              sharedTexture = dungeon.createTexture('dungeon').setImage(resizePng(Buffer.from(tex.getImage()), 256)).setMimeType('image/png');
+              sharedTexture = dungeon
+                .createTexture('dungeon')
+                .setImage(resizePng(Buffer.from(tex.getImage()), 256))
+                .setMimeType('image/png');
             }
-            const m = dungeon
-              .createMaterial(key)
-              .setBaseColorFactor(mat.getBaseColorFactor())
-              .setMetallicFactor(0)
-              .setRoughnessFactor(1);
+            const m = dungeon.createMaterial(key).setBaseColorFactor(mat.getBaseColorFactor()).setMetallicFactor(0).setRoughnessFactor(1);
             if (tex) m.setBaseColorTexture(sharedTexture);
             materials.set(key, m);
           }

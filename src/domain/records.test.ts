@@ -87,7 +87,7 @@ describe('dedupePrs', () => {
 
 describe('prSummary', () => {
   const base = { exerciseId: 'bench_press', setId: 'x', weight: 80, reps: 5, previous: 0 };
-  it('describes each record kind in the lifter\'s unit', () => {
+  it("describes each record kind in the lifter's unit", () => {
     expect(prSummary({ ...base, kind: 'weight', value: 82.5, previous: 80 }, 'kg')).toBe('82.5 kg for 5 reps');
     expect(prSummary({ ...base, kind: 'reps', value: 8, previous: 6 }, 'kg')).toBe('8 reps at 80 kg, up from 6');
     expect(prSummary({ ...base, kind: 'reps', weight: 0, value: 21, previous: 18 }, 'kg')).toBe('21 reps, up from 18');

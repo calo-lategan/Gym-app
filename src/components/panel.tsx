@@ -24,7 +24,8 @@ export function Panel({
   accessibilityLabel?: string;
 }) {
   const border = tone === 'torch' ? 'rgba(242, 169, 59, 0.55)' : tone === 'ember' ? 'rgba(232, 85, 62, 0.55)' : colors.seam;
-  const bg = tone === 'glass' ? colors.glass : tone === 'torch' ? 'rgba(242, 169, 59, 0.08)' : tone === 'ember' ? 'rgba(232, 85, 62, 0.08)' : colors.stone;
+  const bg =
+    tone === 'glass' ? colors.glass : tone === 'torch' ? 'rgba(242, 169, 59, 0.08)' : tone === 'ember' ? 'rgba(232, 85, 62, 0.08)' : colors.stone;
   const base: ViewStyle = {
     backgroundColor: bg,
     borderRadius: radius.lg,

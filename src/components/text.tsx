@@ -10,10 +10,5 @@ export interface AppTextProps extends TextProps {
 
 /** Every piece of text goes through the type ramp; screens never set raw font sizes. */
 export function Text({ variant = 'body', color, align, style, ...props }: AppTextProps) {
-  return (
-    <RNText
-      {...props}
-      style={[type[variant], color ? { color } : null, align ? { textAlign: align } : null, style]}
-    />
-  );
+  return <RNText {...props} style={[type[variant], color ? { color } : null, align ? { textAlign: align } : null, style]} />;
 }

@@ -1,56 +1,117 @@
-# Welcome to your Expo app 👋
+# Ironwyrm
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A gym tracker that plays like a 3D dungeon crawler. Every training day you show
+up clears a room. Every personal record breaks a gate seal and opens the stairs
+down. Minibosses guard every fifth floor with challenges built from your own
+numbers. At the bottom waits a dragon whose ward only breaks when you reach your
+real goal.
 
-## Get started
+<p>
+  <img src="docs/screenshots/camp.jpg" width="160" alt="Camp: the hero in the current dungeon room with today's quest" />
+  <img src="docs/screenshots/battle.jpg" width="160" alt="A live set: the hero strikes a skeleton while the rest timer runs" />
+  <img src="docs/screenshots/victory-loot.jpg" width="160" alt="Victory: a chest opens with a loot beam and an equipped sword" />
+  <img src="docs/screenshots/dungeon.jpg" width="160" alt="The dungeon map with floors, a guardian and the journal" />
+  <img src="docs/screenshots/lair.jpg" width="160" alt="The dragon lair with the goal ward" />
+</p>
 
-1. Install dependencies
+Built with Expo SDK 57, React Native 0.86, Expo Router and React Three Fiber.
+It targets Android first (Google Play), and also runs on iOS and the web.
 
-   ```bash
-   npm install
-   ```
+## What it does
 
-2. Start the app
+**Training**
 
-   ```bash
-   npx expo start
-   ```
+- Programs generated for your goal (build muscle, fitter and healthier, lose
+  fat), experience and number of training days.
+- Every exercise set can be edited, reordered or swapped. "I don't have this
+  equipment" offers alternatives with the same movement pattern, so push, pull
+  and every muscle group stay covered.
+- Home and body weight versions of every day.
+- Start and end each set to time it. Rest timers with alerts.
+- Double progression suggests the next weight; big jumps are flagged.
 
-In the output, you'll find options to open the app in a
+**Science**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Weekly volume per muscle against growth windows (MEV to MRV), push and pull
+  balance, recovery windows and acute to chronic load spikes.
+- A 30 second readiness check-in (sleep, energy, stress, soreness, joint pain)
+  trims the plan on rough days instead of skipping them.
+- Body weight pace warnings and protein, water and sleep targets scaled to you.
+- Sources are listed in the app under Plan, then Science.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+**Game**
 
-## Get a fresh project
+- +1 Strength for every scheduled training day completed; Endurance, Agility
+  and Vitality for rep records, faster sets and body weight milestones.
+- XP, levels, gold, five gear slots with rarity loot and pity timers, potions,
+  titles, streaks with a shield potion.
+- Each set is a strike in a live 3D battle; records land as critical hits.
+- A victory sequence after every workout: XP roll-up, level-up pillar, coin
+  burst, chest and loot beam, floor descent and dragon damage, with
+  synthesized sound and haptics.
+- Floors and gates, weekly minibosses and a procedural dragon whose crystal
+  ward sheds shards as your real goal gets closer.
 
-When you're ready, run:
+**Daily use**
+
+- Reminders at your gym time on training days; move a session earlier or later
+  or swap it with a rest day.
+- Everything is stored on the device. No account, no ads, no tracking.
+
+## Getting started
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Open it in a development build (`npx expo run:android`, or
+`npx eas-cli@latest build --profile development --platform android`), Expo Go,
+or press `w` for the browser.
 
-### Other setup steps
+## Scripts
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Command | What it does |
+| --- | --- |
+| `npm start` | Expo dev server |
+| `npm run check` | Typecheck, lint, format check and unit tests |
+| `npm test` | Jest unit tests for the domain logic |
+| `npm run test:e2e` | Exports the web build and runs the Playwright suite |
+| `npm run format` | Prettier |
+| `npm run export:web` | Static web build in `dist/` |
+| `npm run icons` | Redraws the app icons and store graphics |
+| `npm run sounds` | Re-synthesizes the sound effects |
 
-## Learn more
+## Project layout
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+src/
+  app/          Routes (Expo Router). Thin files that render a screen.
+  screens/      One folder per screen.
+  components/   Shared UI: buttons, panels, steppers, HUD, goal form.
+  domain/       Pure TypeScript: exercises, programs, records, training
+                science, schedule, and the game rules in domain/game.
+                Fully unit tested, no React.
+  state/        Zustand stores (persisted) and every state-changing action.
+  game3d/       React Three Fiber: canvas, models, effects, dragon, scenes.
+  services/     Sound, haptics and notifications.
+  theme/        Design tokens.
+assets/         Optimized 3D models, sounds and icons.
+scripts/        Asset pipelines (models, sounds, icons).
+e2e/            Playwright tests against the web export.
+docs/           Store listing, privacy policy and the release guide.
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Releasing
 
-## Join the community
+See [docs/release-android.md](docs/release-android.md) for EAS builds, Play
+Console setup and the release checklist. Store copy is in
+[docs/store-listing.md](docs/store-listing.md).
 
-Join our community of developers creating universal apps.
+## Credits
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Characters and dungeon pieces: KayKit by Kay Lousberg (CC0).
+- Typeface: Grenze Gotisch (SIL Open Font License).
+- Sound effects are synthesized by `scripts/build-sounds.py`.
+
+See [assets/CREDITS.md](assets/CREDITS.md).

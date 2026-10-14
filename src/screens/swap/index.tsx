@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -11,6 +11,7 @@ import { getExercise } from '@/domain/exercises';
 import { MUSCLE_LABELS } from '@/domain/science';
 import { EQUIPMENT_LABELS, findAlternatives } from '@/domain/substitution';
 import type { EquipmentId } from '@/domain/types';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { replaceInProgram, setEquipment, swapExercise } from '@/state/actions';
@@ -60,11 +61,15 @@ export function SwapScreen() {
       swapExercise(exerciseIndex, id, { permanent, missingEquipment: lacking });
     } else if (day) {
       replaceInProgram(day.id, params.slotId ?? '', id);
-      if (lacking.length) setEquipment('gymEquipment', profile.gymEquipment.filter((q) => !lacking.includes(q)));
+      if (lacking.length)
+        setEquipment(
+          'gymEquipment',
+          profile.gymEquipment.filter((q) => !lacking.includes(q)),
+        );
     }
     play('setStart', 0.7);
     haptics.success();
-    router.back();
+    goBack('/plan');
   };
 
   return (
@@ -72,8 +77,8 @@ export function SwapScreen() {
       <View style={{ gap: spacing.xs }}>
         <Text variant="title">Swap {exercise.name}</Text>
         <Text variant="subhead">
-          Works {exercise.primary.map((m) => MUSCLE_LABELS[m].toLowerCase()).join(' and ')}. Every option below trains the same pattern, so your push and pull
-          balance holds.
+          Works {exercise.primary.map((m) => MUSCLE_LABELS[m].toLowerCase()).join(' and ')}. Every option below trains the same pattern, so your push
+          and pull balance holds.
         </Text>
       </View>
 

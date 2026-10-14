@@ -36,7 +36,11 @@ function WeekBars({ weeks, goal }: { weeks: { start: string; count: number }[]; 
   const max = Math.max(goal, ...weeks.map((w) => w.count), 1);
   return (
     <View style={{ gap: spacing.xs }}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 84 }} accessible accessibilityLabel={`Workouts per week, last ${WEEKS} weeks: ${weeks.map((w) => w.count).join(', ')}`}>
+      <View
+        style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 84 }}
+        accessible
+        accessibilityLabel={`Workouts per week, last ${WEEKS} weeks: ${weeks.map((w) => w.count).join(', ')}`}
+      >
         {weeks.map((w, i) => {
           const hit = w.count >= goal;
           return (
@@ -94,7 +98,11 @@ function SessionCard({ session }: { session: WorkoutSession }) {
       })}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-        <Icon name={session.kind === 'recovery' ? 'heart' : session.location === 'home' ? 'home' : 'swords'} size={18} color={session.kind === 'recovery' ? colors.verdant : colors.torch} />
+        <Icon
+          name={session.kind === 'recovery' ? 'heart' : session.location === 'home' ? 'home' : 'swords'}
+          size={18}
+          color={session.kind === 'recovery' ? colors.verdant : colors.torch}
+        />
         <View style={{ flex: 1 }}>
           <Text variant="bodyStrong" numberOfLines={1}>
             {session.title}
@@ -130,7 +138,14 @@ function SessionCard({ session }: { session: WorkoutSession }) {
 export function HistoryScreen() {
   const sessions = useHistory((s) => s.sessions);
   const schedule = useGame((s) => s.schedule);
-  const done = useMemo(() => sessions.filter((s) => s.endedAt).slice().reverse(), [sessions]);
+  const done = useMemo(
+    () =>
+      sessions
+        .filter((s) => s.endedAt)
+        .slice()
+        .reverse(),
+    [sessions],
+  );
   const today = dayKeyOf(new Date());
   const weeks = useMemo(() => weeklyCounts(done, today), [done, today]);
   const goal = schedule.trainingDays.filter(Boolean).length;
@@ -150,7 +165,18 @@ export function HistoryScreen() {
               { label: 'Time trained', value: totalMinutes >= 60 ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m` : `${totalMinutes}m` },
               { label: 'Weekly goal', value: goal },
             ].map((t) => (
-              <View key={t.label} style={{ flex: 1, alignItems: 'center', paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.stone, borderWidth: 1, borderColor: colors.seam }}>
+              <View
+                key={t.label}
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  paddingVertical: spacing.sm,
+                  borderRadius: radius.md,
+                  backgroundColor: colors.stone,
+                  borderWidth: 1,
+                  borderColor: colors.seam,
+                }}
+              >
                 <Text variant="stat">{t.value}</Text>
                 <Text variant="label">{t.label}</Text>
               </View>

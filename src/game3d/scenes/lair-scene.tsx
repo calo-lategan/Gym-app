@@ -89,7 +89,7 @@ export interface LairSceneProps {
   onDragonTap?: () => void;
 }
 
-export const HERO_START: [number, number, number] = [-1.5, 0, 3.6];
+export const HERO_START: [number, number, number] = [-1.15, 0, 2.9];
 export const HERO_STRIKE: [number, number, number] = [-0.6, 0, -0.2];
 
 export function LairScene({ hero, tier, health, roarKey, hurtKey, dead, shakeKey, heroAction, heroShot, heroAt, onDragonTap }: LairSceneProps) {
@@ -101,7 +101,16 @@ export function LairScene({ hero, tier, health, roarKey, hurtKey, dead, shakeKey
       <SceneAtmosphere fog="#120807" near={12} far={32} />
       <Suspense fallback={null}>
         <DungeonRoom layout={layout} torchColor="#ff8a3d" />
-        <Dragon tier={tier} position={DRAGON_POS} scale={1.2} health={health} roarKey={roarKey} hurtKey={hurtKey} dead={dead} onPointerDown={onDragonTap} />
+        <Dragon
+          tier={tier}
+          position={DRAGON_POS}
+          scale={1.2}
+          health={health}
+          roarKey={roarKey}
+          hurtKey={hurtKey}
+          dead={dead}
+          onPointerDown={onDragonTap}
+        />
         <Mover to={heroAt}>
           <HeroModel hero={hero} action={heroAction} oneShot={heroShot} rotation={[0, Math.PI + 0.3, 0]} />
         </Mover>

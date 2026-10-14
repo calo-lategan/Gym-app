@@ -97,24 +97,14 @@ export function detectPrs(record: ExerciseRecord | undefined, set: SetLog, exerc
 
   const duration = setDuration(set);
   const fastest = record.fastest[speedKey(set.weight, set.reps)];
-  if (
-    duration !== null &&
-    fastest !== undefined &&
-    duration >= set.reps * MIN_SECONDS_PER_REP &&
-    duration <= fastest * SPEED_MARGIN
-  ) {
+  if (duration !== null && fastest !== undefined && duration >= set.reps * MIN_SECONDS_PER_REP && duration <= fastest * SPEED_MARGIN) {
     events.push({ ...base, kind: 'speed', value: duration, previous: fastest });
   }
   return events;
 }
 
 /** Fold a set into a record. Pure: returns a new record. */
-export function applySet(
-  record: ExerciseRecord | undefined,
-  set: SetLog,
-  exercise: Exercise,
-  day: DayKey,
-): ExerciseRecord {
+export function applySet(record: ExerciseRecord | undefined, set: SetLog, exercise: Exercise, day: DayKey): ExerciseRecord {
   const next: ExerciseRecord = record
     ? { ...record, repsAtLoad: { ...record.repsAtLoad }, fastest: { ...record.fastest } }
     : emptyRecord(exercise.id, day);
@@ -173,7 +163,9 @@ export function prSummary(pr: PrEvent, unit: WeightUnit): string {
     case 'e1rm':
       return `Estimated max ${formatWeight(pr.value, unit)}, up from ${formatWeight(pr.previous, unit)}`;
     case 'reps':
-      return pr.weight > 0 ? `${pr.value} reps at ${formatWeight(pr.weight, unit)}, up from ${pr.previous}` : `${pr.value} reps, up from ${pr.previous}`;
+      return pr.weight > 0
+        ? `${pr.value} reps at ${formatWeight(pr.weight, unit)}, up from ${pr.previous}`
+        : `${pr.value} reps, up from ${pr.previous}`;
     case 'hold':
       return `${pr.value} s hold, up from ${pr.previous} s`;
     case 'speed':
@@ -187,9 +179,7 @@ export function dedupePrs(events: readonly PrEvent[]): PrEvent[] {
   for (const event of events) {
     const key = `${event.exerciseId}:${event.kind}`;
     const current = best.get(key);
-    const better =
-      !current ||
-      (event.kind === 'speed' ? event.value < current.value : event.value > current.value);
+    const better = !current || (event.kind === 'speed' ? event.value < current.value : event.value > current.value);
     if (better) best.set(key, event);
   }
   return [...best.values()];

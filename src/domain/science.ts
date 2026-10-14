@@ -2,17 +2,7 @@ import { addDays, daysBetween } from './dates';
 import { findExercise } from './exercises';
 import type { ExerciseRecord } from './records';
 import { loadIncrement } from './strength';
-import type {
-  DayKey,
-  Exercise,
-  Focus,
-  GoalKind,
-  MuscleGroup,
-  ProgramDay,
-  WeighIn,
-  WeightUnit,
-  WorkoutSession,
-} from './types';
+import type { DayKey, Exercise, Focus, GoalKind, MuscleGroup, ProgramDay, WeighIn, WeightUnit, WorkoutSession } from './types';
 
 /**
  * Weekly hard-set landmarks per muscle group: MEV is the least volume that
@@ -71,11 +61,7 @@ function addSetToMuscles(totals: Record<MuscleGroup, number>, exercise: Exercise
 }
 
 /** Fractional hard sets per muscle over the `days` days ending on `endDay` (inclusive). */
-export function weeklySets(
-  sessions: readonly WorkoutSession[],
-  endDay: DayKey,
-  days = 7,
-): Record<MuscleGroup, number> {
+export function weeklySets(sessions: readonly WorkoutSession[], endDay: DayKey, days = 7): Record<MuscleGroup, number> {
   const totals = emptyMuscles();
   for (const session of sessions) {
     const age = daysBetween(session.dayKey, endDay);
@@ -154,10 +140,7 @@ export function acuteChronicRatio(sessions: readonly WorkoutSession[], today: Da
     const age = daysBetween(s.dayKey, today);
     return age >= 0 && age < 28;
   });
-  const oldest = sessions.reduce<DayKey | null>(
-    (min, s) => (min === null || s.dayKey < min ? s.dayKey : min),
-    null,
-  );
+  const oldest = sessions.reduce<DayKey | null>((min, s) => (min === null || s.dayKey < min ? s.dayKey : min), null);
   if (!oldest || daysBetween(oldest, today) < 21) return null;
   const acute = inWindow.filter((s) => daysBetween(s.dayKey, today) < 7).reduce((sum, s) => sum + sessionLoad(s), 0);
   const chronic = inWindow.reduce((sum, s) => sum + sessionLoad(s), 0) / 4;
@@ -175,12 +158,7 @@ export interface TrainingWarning {
   muscles?: MuscleGroup[];
 }
 
-function hoursSinceMuscleHit(
-  sessions: readonly WorkoutSession[],
-  muscle: MuscleGroup,
-  now: number,
-  minSets: number,
-): number | null {
+function hoursSinceMuscleHit(sessions: readonly WorkoutSession[], muscle: MuscleGroup, now: number, minSets: number): number | null {
   let latest: number | null = null;
   for (const session of sessions) {
     let sets = 0;
@@ -209,19 +187,12 @@ function consecutiveTrainingDays(sessions: readonly WorkoutSession[], today: Day
 }
 
 /** Warnings for today's planned session based on recent training. */
-export function assessPlan(
-  plan: ProgramDay,
-  sessions: readonly WorkoutSession[],
-  today: DayKey,
-  now: number,
-): TrainingWarning[] {
+export function assessPlan(plan: ProgramDay, sessions: readonly WorkoutSession[], today: DayKey, now: number): TrainingWarning[] {
   const warnings: TrainingWarning[] = [];
   const planned = plannedSets(plan);
   const pastWeek = weeklySets(sessions, addDays(today, -1), 6);
 
-  const overVolume = (Object.keys(planned) as MuscleGroup[]).filter(
-    (m) => planned[m] >= 2 && pastWeek[m] + planned[m] > VOLUME_LANDMARKS[m].mrv,
-  );
+  const overVolume = (Object.keys(planned) as MuscleGroup[]).filter((m) => planned[m] >= 2 && pastWeek[m] + planned[m] > VOLUME_LANDMARKS[m].mrv);
   if (overVolume.length > 0) {
     const worst = overVolume[0];
     warnings.push({
@@ -324,17 +295,15 @@ export function weeklyWeightChangePct(weighIns: readonly WeighIn[], today: DayKe
  * muscle (Helms et al., 2014). Lean gain of about 0.25 to 0.5% per week keeps
  * fat gain modest.
  */
-export function assessWeightRate(
-  direction: 'down' | 'up',
-  ratePct: number | null,
-): TrainingWarning | null {
+export function assessWeightRate(direction: 'down' | 'up', ratePct: number | null): TrainingWarning | null {
   if (ratePct === null) return null;
   if (direction === 'down' && ratePct < -1) {
     return {
       id: 'losing_fast',
       level: 'caution',
       title: `Losing ${Math.abs(ratePct).toFixed(1)}% a week`,
-      detail: 'Faster than about 1% per week raises the risk of losing muscle and strength. A slightly smaller calorie deficit keeps more of what you build.',
+      detail:
+        'Faster than about 1% per week raises the risk of losing muscle and strength. A slightly smaller calorie deficit keeps more of what you build.',
     };
   }
   if (direction === 'up' && ratePct > 0.75) {

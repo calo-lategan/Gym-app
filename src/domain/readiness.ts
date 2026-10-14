@@ -1,14 +1,7 @@
 import { findExercise } from './exercises';
 import { MUSCLE_LABELS } from './science';
 import { bestSubstitute } from './substitution';
-import type {
-  EquipmentId,
-  JointArea,
-  MuscleGroup,
-  PlannedExercise,
-  ProgramDay,
-  ReadinessInput,
-} from './types';
+import type { EquipmentId, JointArea, MuscleGroup, PlannedExercise, ProgramDay, ReadinessInput } from './types';
 
 export type ReadinessBand = 'ready' | 'steady' | 'tired' | 'drained';
 
@@ -41,7 +34,9 @@ export function scoreReadiness(input: ReadinessInput): ReadinessResult {
     notes.push('Under six hours of sleep lowers strength and focus. Skip max attempts today.');
   }
   if (input.pain.length > 0) {
-    notes.push('Pain is a signal, not a challenge. Exercises loading that joint are taken out today. If it lasts more than a few days, see a physio or doctor.');
+    notes.push(
+      'Pain is a signal, not a challenge. Exercises loading that joint are taken out today. If it lasts more than a few days, see a physio or doctor.',
+    );
   }
 
   const headline: Record<ReadinessBand, string> = {
@@ -130,12 +125,7 @@ export function adjustPlanForReadiness(
   return { day: { ...day, exercises }, changes, loadFactor, extraRestSec };
 }
 
-function findJointFriendly(
-  exerciseId: string,
-  pain: readonly JointArea[],
-  equipment: readonly EquipmentId[],
-  used: Set<string>,
-): string | null {
+function findJointFriendly(exerciseId: string, pain: readonly JointArea[], equipment: readonly EquipmentId[], used: Set<string>): string | null {
   const exclude = [...used];
   for (let i = 0; i < 6; i++) {
     const candidate = bestSubstitute(exerciseId, equipment, exclude);

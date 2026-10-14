@@ -10,6 +10,7 @@
     "expo-asset": "~57.0.19",
     "expo-audio": "~57.0.5",
     "expo-constants": "~57.0.21",
+    "expo-dev-client": "~57.0.20",
     "expo-device": "~57.0.2",
     "expo-file-system": "~57.0.7",
     "expo-font": "~57.0.4",
@@ -68,7 +69,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "export:web": "expo export -p web",
-    "check": "npm run typecheck && npm run lint && npm test -- --ci"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test -- --ci",
+    "test:e2e": "expo export -p web && playwright test",
+    "icons": "python3 scripts/build-icons.py",
+    "sounds": "python3 scripts/build-sounds.py",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "private": true,
   "jest": {

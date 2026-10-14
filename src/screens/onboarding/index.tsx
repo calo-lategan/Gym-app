@@ -65,7 +65,8 @@ export function OnboardingScreen() {
   const validate = (): string | null => {
     if (step === 0 && !name.trim()) return 'Give your hero a name.';
     if (step === 2) {
-      if (bodyweightKg === null || bodyweightKg < 30 || bodyweightKg > 300) return 'Enter your body weight so the app can scale loads and recovery advice.';
+      if (bodyweightKg === null || bodyweightKg < 30 || bodyweightKg > 300)
+        return 'Enter your body weight so the app can scale loads and recovery advice.';
     }
     if (step === 1 || step === 5) {
       if (goalKind === 'bodyweight' && step === 5) {
@@ -170,10 +171,7 @@ export function OnboardingScreen() {
         </Text>
       </View>
 
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, paddingBottom: spacing.xxl }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, paddingBottom: spacing.xxl }}>
         {step === 0 ? (
           <>
             <View>
@@ -186,7 +184,15 @@ export function OnboardingScreen() {
             <Field label="Hero name" value={name} onChangeText={setName} placeholder="Name your hero" testID="hero-name" maxLength={20} />
             <View style={{ gap: spacing.sm }}>
               {HERO_CLASSES.map((c) => (
-                <OptionCard key={c.id} title={c.name} detail={c.blurb} selected={heroClass === c.id} onPress={() => setHeroClass(c.id)} testID={`class-${c.id}`} icon="swords" />
+                <OptionCard
+                  key={c.id}
+                  title={c.name}
+                  detail={c.blurb}
+                  selected={heroClass === c.id}
+                  onPress={() => setHeroClass(c.id)}
+                  testID={`class-${c.id}`}
+                  icon="swords"
+                />
               ))}
             </View>
           </>
@@ -199,9 +205,30 @@ export function OnboardingScreen() {
               <Text variant="subhead">Your plan, rep ranges and rewards are tuned to this.</Text>
             </View>
             <View style={{ gap: spacing.sm }}>
-              <OptionCard title="Grow" detail="Build muscle and strength. Heavier sets, longer rests." icon="bolt" selected={focus === 'grow'} onPress={() => chooseFocus('grow')} testID="focus-grow" />
-              <OptionCard title="Get fit" detail="Feel stronger and healthier. Balanced strength and conditioning." icon="heart" selected={focus === 'fit'} onPress={() => chooseFocus('fit')} testID="focus-fit" />
-              <OptionCard title="Get lean" detail="Lose fat and keep your muscle. Higher reps, short rests, finishers." icon="run" selected={focus === 'lean'} onPress={() => chooseFocus('lean')} testID="focus-lean" />
+              <OptionCard
+                title="Grow"
+                detail="Build muscle and strength. Heavier sets, longer rests."
+                icon="bolt"
+                selected={focus === 'grow'}
+                onPress={() => chooseFocus('grow')}
+                testID="focus-grow"
+              />
+              <OptionCard
+                title="Get fit"
+                detail="Feel stronger and healthier. Balanced strength and conditioning."
+                icon="heart"
+                selected={focus === 'fit'}
+                onPress={() => chooseFocus('fit')}
+                testID="focus-fit"
+              />
+              <OptionCard
+                title="Get lean"
+                detail="Lose fat and keep your muscle. Higher reps, short rests, finishers."
+                icon="run"
+                selected={focus === 'lean'}
+                onPress={() => chooseFocus('lean')}
+                testID="focus-lean"
+              />
             </View>
             <View style={{ gap: spacing.sm }}>
               <Text variant="heading">
@@ -244,8 +271,23 @@ export function OnboardingScreen() {
                       <Chip key={id} label={getExercise(id).name.replace('Barbell ', '')} selected={liftId === id} onPress={() => setLiftId(id)} />
                     ))}
                   </ChipRow>
-                  <Field label="Current best estimate (one rep)" value={liftStartText} onChangeText={setLiftStartText} keyboardType="decimal-pad" suffix={unitLabel} placeholder="Leave empty and we will estimate it" />
-                  <Field label="Target one rep max" value={targetText} onChangeText={setTargetText} keyboardType="decimal-pad" suffix={unitLabel} placeholder="For example 20% above your best" testID="goal-target" />
+                  <Field
+                    label="Current best estimate (one rep)"
+                    value={liftStartText}
+                    onChangeText={setLiftStartText}
+                    keyboardType="decimal-pad"
+                    suffix={unitLabel}
+                    placeholder="Leave empty and we will estimate it"
+                  />
+                  <Field
+                    label="Target one rep max"
+                    value={targetText}
+                    onChangeText={setTargetText}
+                    keyboardType="decimal-pad"
+                    suffix={unitLabel}
+                    placeholder="For example 20% above your best"
+                    testID="goal-target"
+                  />
                 </View>
               ) : null}
             </View>
@@ -262,12 +304,38 @@ export function OnboardingScreen() {
               <Chip label="Kilograms" selected={unit === 'kg'} onPress={() => setUnit('kg')} testID="unit-kg" />
               <Chip label="Pounds" selected={unit === 'lb'} onPress={() => setUnit('lb')} testID="unit-lb" />
             </ChipRow>
-            <Field label="Body weight" value={weightText} onChangeText={setWeightText} keyboardType="decimal-pad" suffix={unitLabel} placeholder={unit === 'kg' ? '80' : '176'} testID="bodyweight" />
+            <Field
+              label="Body weight"
+              value={weightText}
+              onChangeText={setWeightText}
+              keyboardType="decimal-pad"
+              suffix={unitLabel}
+              placeholder={unit === 'kg' ? '80' : '176'}
+              testID="bodyweight"
+            />
             <View style={{ gap: spacing.sm }}>
               <Text variant="label">Training experience</Text>
-              <OptionCard title="New or returning" detail="Less than 6 months of steady lifting" selected={experience === 'beginner'} onPress={() => setExperience('beginner')} testID="exp-beginner" />
-              <OptionCard title="Intermediate" detail="6 months to 2 years of regular training" selected={experience === 'intermediate'} onPress={() => setExperience('intermediate')} testID="exp-intermediate" />
-              <OptionCard title="Advanced" detail="More than 2 years of consistent training" selected={experience === 'advanced'} onPress={() => setExperience('advanced')} testID="exp-advanced" />
+              <OptionCard
+                title="New or returning"
+                detail="Less than 6 months of steady lifting"
+                selected={experience === 'beginner'}
+                onPress={() => setExperience('beginner')}
+                testID="exp-beginner"
+              />
+              <OptionCard
+                title="Intermediate"
+                detail="6 months to 2 years of regular training"
+                selected={experience === 'intermediate'}
+                onPress={() => setExperience('intermediate')}
+                testID="exp-intermediate"
+              />
+              <OptionCard
+                title="Advanced"
+                detail="More than 2 years of consistent training"
+                selected={experience === 'advanced'}
+                onPress={() => setExperience('advanced')}
+                testID="exp-advanced"
+              />
             </View>
             <View style={{ gap: spacing.sm }}>
               <Text variant="label">Sex, for starting weight estimates only</Text>
@@ -317,11 +385,22 @@ export function OnboardingScreen() {
             <View style={{ gap: spacing.sm }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text variant="label">At the gym</Text>
-                <Button title={gym.length === ALL_EQUIPMENT.length ? 'Clear' : 'Full gym'} variant="ghost" size="sm" onPress={() => setGym(gym.length === ALL_EQUIPMENT.length ? [] : ALL_EQUIPMENT)} />
+                <Button
+                  title={gym.length === ALL_EQUIPMENT.length ? 'Clear' : 'Full gym'}
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => setGym(gym.length === ALL_EQUIPMENT.length ? [] : ALL_EQUIPMENT)}
+                />
               </View>
               <ChipRow>
                 {ALL_EQUIPMENT.map((q) => (
-                  <Chip key={q} label={EQUIPMENT_LABELS[q]} selected={gym.includes(q)} onPress={() => setGym((g) => (g.includes(q) ? g.filter((x) => x !== q) : [...g, q]))} testID={`gym-${q}`} />
+                  <Chip
+                    key={q}
+                    label={EQUIPMENT_LABELS[q]}
+                    selected={gym.includes(q)}
+                    onPress={() => setGym((g) => (g.includes(q) ? g.filter((x) => x !== q) : [...g, q]))}
+                    testID={`gym-${q}`}
+                  />
                 ))}
               </ChipRow>
             </View>
@@ -330,7 +409,13 @@ export function OnboardingScreen() {
               <Text variant="caption">Nothing at all is fine. Home sessions use body weight versions of your plan, so there are no excuses.</Text>
               <ChipRow>
                 {(['dumbbells', 'kettlebell', 'bands', 'pullup_bar', 'bench'] as EquipmentId[]).map((q) => (
-                  <Chip key={q} label={EQUIPMENT_LABELS[q]} selected={home.includes(q)} onPress={() => setHome((h) => (h.includes(q) ? h.filter((x) => x !== q) : [...h, q]))} testID={`home-${q}`} />
+                  <Chip
+                    key={q}
+                    label={EQUIPMENT_LABELS[q]}
+                    selected={home.includes(q)}
+                    onPress={() => setHome((h) => (h.includes(q) ? h.filter((x) => x !== q) : [...h, q]))}
+                    testID={`home-${q}`}
+                  />
                 ))}
               </ChipRow>
             </View>
@@ -372,12 +457,32 @@ export function OnboardingScreen() {
         ) : null}
       </ScrollView>
 
-      <View style={{ flexDirection: 'row', gap: spacing.sm, padding: spacing.md, paddingBottom: insets.bottom + spacing.md, borderTopWidth: 1, borderTopColor: colors.seam, backgroundColor: colors.abyss }}>
-        {step > 0 ? <Button title="Back" variant="secondary" onPress={() => setStep((s) => s - 1)} style={{ flex: 1 }} testID="onboarding-back" /> : null}
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: spacing.sm,
+          padding: spacing.md,
+          paddingBottom: insets.bottom + spacing.md,
+          borderTopWidth: 1,
+          borderTopColor: colors.seam,
+          backgroundColor: colors.abyss,
+        }}
+      >
+        {step > 0 ? (
+          <Button title="Back" variant="secondary" onPress={() => setStep((s) => s - 1)} style={{ flex: 1 }} testID="onboarding-back" />
+        ) : null}
         {step < STEPS.length - 1 ? (
           <Button title="Next" onPress={next} style={{ flex: 2 }} testID="onboarding-next" />
         ) : (
-          <Button title="Enter the dungeon" icon="swords" onPress={finish} loading={saving} style={{ flex: 2 }} testID="onboarding-finish" sound={null} />
+          <Button
+            title="Enter the dungeon"
+            icon="swords"
+            onPress={finish}
+            loading={saving}
+            style={{ flex: 2 }}
+            testID="onboarding-finish"
+            sound={null}
+          />
         )}
       </View>
     </KeyboardAvoidingView>

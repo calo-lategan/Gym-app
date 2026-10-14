@@ -18,29 +18,9 @@ export type Sex = 'male' | 'female' | 'unspecified';
 export type WeightUnit = 'kg' | 'lb';
 
 export type EquipmentId =
-  | 'barbell'
-  | 'rack'
-  | 'bench'
-  | 'dumbbells'
-  | 'kettlebell'
-  | 'cable'
-  | 'machines'
-  | 'pullup_bar'
-  | 'dip_bars'
-  | 'bands'
-  | 'cardio';
+  'barbell' | 'rack' | 'bench' | 'dumbbells' | 'kettlebell' | 'cable' | 'machines' | 'pullup_bar' | 'dip_bars' | 'bands' | 'cardio';
 
-export type MuscleGroup =
-  | 'chest'
-  | 'back'
-  | 'shoulders'
-  | 'biceps'
-  | 'triceps'
-  | 'quads'
-  | 'hamstrings'
-  | 'glutes'
-  | 'calves'
-  | 'core';
+export type MuscleGroup = 'chest' | 'back' | 'shoulders' | 'biceps' | 'triceps' | 'quads' | 'hamstrings' | 'glutes' | 'calves' | 'core';
 
 export type Pattern =
   | 'squat'

@@ -15,6 +15,7 @@ import { LairScene, HERO_START, HERO_STRIKE } from '@/game3d/scenes/lair-scene';
 import { heroLoadout } from '@/game3d/loadout';
 import type { OneShot } from '@/game3d/models';
 import { useDragonProgress } from '@/hooks/use-game-data';
+import { goBack } from '@/navigation/back';
 import { haptics } from '@/services/haptics';
 import { play } from '@/services/sound';
 import { useGame } from '@/state/stores';
@@ -71,7 +72,7 @@ export function LairScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.abyss, alignItems: 'center', justifyContent: 'center', padding: spacing.lg, gap: spacing.md }}>
         <Text variant="title">The lair is empty</Text>
-        <Button title="Return to camp" onPress={() => router.back()} />
+        <Button title="Return to camp" onPress={() => goBack('/')} />
       </View>
     );
   }
@@ -180,25 +181,69 @@ export function LairScreen() {
       </View>
 
       {flash ? (
-        <Animated.View key={flash} pointerEvents="none" entering={FadeIn.duration(80)} exiting={FadeOut.duration(800)} style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 214, 140, 0.45)' }]} />
+        <Animated.View
+          key={flash}
+          pointerEvents="none"
+          entering={FadeIn.duration(80)}
+          exiting={FadeOut.duration(800)}
+          style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 214, 140, 0.45)' }]}
+        />
       ) : null}
 
-      <View pointerEvents="box-none" style={{ paddingTop: insets.top + spacing.sm, paddingHorizontal: spacing.md, flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}>
-        <IconButton icon="back" label="Back" tone="filled" onPress={() => router.back()} testID="lair-back" />
+      <View
+        pointerEvents="box-none"
+        style={{
+          paddingTop: insets.top + spacing.sm,
+          paddingHorizontal: spacing.md,
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          gap: spacing.sm,
+        }}
+      >
+        <IconButton icon="back" label="Back" tone="filled" onPress={() => goBack('/')} testID="lair-back" />
         <View pointerEvents="none" style={{ flex: 1, alignItems: 'center', paddingRight: 48 + spacing.sm }}>
-          <Text style={{ fontFamily: fonts.display, fontSize: 34, lineHeight: 38, color: colors.bone, textShadowColor: 'rgba(0,0,0,0.9)', textShadowRadius: 12 }}>{dragon.name}</Text>
+          <Text
+            style={{
+              fontFamily: fonts.display,
+              fontSize: 34,
+              lineHeight: 38,
+              color: colors.bone,
+              textShadowColor: 'rgba(0,0,0,0.9)',
+              textShadowRadius: 12,
+            }}
+          >
+            {dragon.name}
+          </Text>
           <Text variant="caption" color={colors.ember} style={{ textShadowColor: 'rgba(0,0,0,0.9)', textShadowRadius: 8 }}>
             {dragon.epithet}
           </Text>
         </View>
       </View>
 
-      <View pointerEvents="box-none" style={{ flex: 1, justifyContent: 'flex-end', paddingHorizontal: spacing.md, paddingBottom: insets.bottom + spacing.md }}>
+      <View
+        pointerEvents="box-none"
+        style={{ flex: 1, justifyContent: 'flex-end', paddingHorizontal: spacing.md, paddingBottom: insets.bottom + spacing.md }}
+      >
         {dead ? (
-          <Animated.View entering={FadeInDown.delay(1200).springify()} pointerEvents="none" style={{ alignItems: 'center', marginBottom: spacing.xl }}>
-            <Text style={{ fontFamily: fonts.display, fontSize: 48, lineHeight: 54, color: colors.torchHigh, textShadowColor: 'rgba(242,169,59,0.9)', textShadowRadius: 24 }}>Dragon slain</Text>
+          <Animated.View
+            entering={FadeInDown.delay(1200).springify()}
+            pointerEvents="none"
+            style={{ alignItems: 'center', marginBottom: spacing.xl }}
+          >
+            <Text
+              style={{
+                fontFamily: fonts.display,
+                fontSize: 48,
+                lineHeight: 54,
+                color: colors.torchHigh,
+                textShadowColor: 'rgba(242,169,59,0.9)',
+                textShadowRadius: 24,
+              }}
+            >
+              Dragon slain
+            </Text>
           </Animated.View>
-        ) : (
+        ) : slaying ? null : (
           <HudPanel>
             <View style={{ gap: spacing.ms }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
@@ -226,14 +271,31 @@ export function LairScreen() {
                   <Text variant="bodyStrong" color={colors.verdant}>
                     You reached your goal. The ward is gone.
                   </Text>
-                  <Button title={`Slay ${dragon.name}`} icon="swords" variant="danger" size="xl" onPress={slay} loading={slaying} sound={null} testID="slay-dragon" />
+                  <Button
+                    title={`Slay ${dragon.name}`}
+                    icon="swords"
+                    variant="danger"
+                    size="xl"
+                    onPress={slay}
+                    loading={slaying}
+                    sound={null}
+                    testID="slay-dragon"
+                  />
                 </>
               ) : (
                 <>
                   <Text variant="caption">
-                    Its ward breaks only when you reach your real goal. Every workout, record and weigh-in moves you closer. Tap the dragon if you dare.
+                    Its ward breaks only when you reach your real goal. Every workout, record and weigh-in moves you closer. Tap the dragon if you
+                    dare.
                   </Text>
-                  <Button title="Change goal" icon="target" variant="ghost" size="sm" onPress={() => router.push('/slay?mode=change')} testID="change-goal" />
+                  <Button
+                    title="Change goal"
+                    icon="target"
+                    variant="ghost"
+                    size="sm"
+                    onPress={() => router.push('/slay?mode=change')}
+                    testID="change-goal"
+                  />
                 </>
               )}
             </View>

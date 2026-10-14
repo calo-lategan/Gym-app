@@ -1,11 +1,5 @@
 import { getExercise } from './exercises';
-import {
-  estimateOneRepMax,
-  formatWeight,
-  roundLoad,
-  suggestNextTarget,
-  suggestStartingLoad,
-} from './strength';
+import { estimateOneRepMax, formatWeight, roundLoad, suggestNextTarget, suggestStartingLoad } from './strength';
 import type { SetLog } from './types';
 
 const set = (weight: number, reps: number): SetLog => ({

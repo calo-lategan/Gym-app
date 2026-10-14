@@ -43,7 +43,16 @@ export function RecordsScreen() {
             placeholderTextColor={colors.dim}
             accessibilityLabel="Find an exercise"
             selectionColor={colors.torch}
-            style={{ minHeight: 48, paddingHorizontal: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.seam, backgroundColor: colors.slate, color: colors.bone, fontSize: 17 }}
+            style={{
+              minHeight: 48,
+              paddingHorizontal: spacing.md,
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.seam,
+              backgroundColor: colors.slate,
+              color: colors.bone,
+              fontSize: 17,
+            }}
           />
         </View>
       }
@@ -54,7 +63,16 @@ export function RecordsScreen() {
         const loaded = exercise.externalLoad && item.bestWeight > 0;
         const reps = bestReps(item);
         return (
-          <View style={{ padding: spacing.md, gap: spacing.sm, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.seam, backgroundColor: colors.stone }}>
+          <View
+            style={{
+              padding: spacing.md,
+              gap: spacing.sm,
+              borderRadius: radius.lg,
+              borderWidth: 1,
+              borderColor: colors.seam,
+              backgroundColor: colors.stone,
+            }}
+          >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
               <Icon name="trophy" size={18} color={colors.torch} />
               <Text variant="bodyStrong" style={{ flex: 1 }} numberOfLines={1}>

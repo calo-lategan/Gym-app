@@ -32,9 +32,10 @@ export function HeroModel({
 }) {
   const loadout = useMemo(() => heroLoadout(hero, { resting }), [hero, resting]);
   const visible = useMemo(() => (name: string) => loadout.visible.has(name), [loadout]);
-  const glow = loadout.weaponRarity && loadout.weaponRarity !== 'common'
-    ? { meshes: loadout.weaponMeshes, color: rarityColors[loadout.weaponRarity], intensity: loadout.weaponRarity === 'uncommon' ? 0.25 : 0.6 }
-    : null;
+  const glow =
+    loadout.weaponRarity && loadout.weaponRarity !== 'common'
+      ? { meshes: loadout.weaponMeshes, color: rarityColors[loadout.weaponRarity], intensity: loadout.weaponRarity === 'uncommon' ? 0.25 : 0.6 }
+      : null;
   return (
     <group position={position} rotation={rotation} scale={scale}>
       <BlobShadow />

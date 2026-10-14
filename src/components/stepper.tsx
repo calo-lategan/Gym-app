@@ -101,7 +101,14 @@ export function Stepper({
         style={{ flexDirection: 'row', alignItems: 'center', gap: compact ? spacing.xs : spacing.sm }}
       >
         {button(-1)}
-        <Text testID={testID ? `${testID}-value` : undefined} variant="stat" align="center" style={{ flex: 1, fontSize, lineHeight: 34 }} numberOfLines={1} adjustsFontSizeToFit>
+        <Text
+          testID={testID ? `${testID}-value` : undefined}
+          variant="stat"
+          align="center"
+          style={{ flex: 1, fontSize, lineHeight: 34 }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {text}
         </Text>
         {button(1)}

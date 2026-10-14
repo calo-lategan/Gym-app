@@ -66,12 +66,7 @@ export function CampScene({ hero, dungeon, mood }: { hero: Hero; dungeon: Dungeo
           <MonsterModel kind="skeleton_warrior" boss scale={1.55} position={[0, 0, -3.2]} action="Idle_Combat" />
         ) : null}
         {!resting && !(isBossFloor(dungeon.floor) && dungeon.boss) ? (
-          <MonsterModel
-            kind={zone.monsters[0]}
-            action="Skeletons_Inactive_Floor_Pose"
-            position={[2.8, 0, -2.6]}
-            rotation={[0, -0.9, 0]}
-          />
+          <MonsterModel kind={zone.monsters[0]} action="Skeletons_Inactive_Floor_Pose" position={[2.8, 0, -2.6]} rotation={[0, -0.9, 0]} />
         ) : null}
         <Embers count={36} spread={11} height={6} color={zone.light} size={0.07} speed={0.25} seed={2} />
       </Suspense>

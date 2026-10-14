@@ -1,18 +1,7 @@
 import { findExercise } from '../exercises';
 import type { PrEvent } from '../records';
 import { createRng, hashString } from '../rng';
-import type {
-  BossState,
-  DayKey,
-  DragonState,
-  DungeonState,
-  Hero,
-  Item,
-  JournalEntry,
-  Rarity,
-  Stats,
-  WorkoutSession,
-} from '../types';
+import type { BossState, DayKey, DragonState, DungeonState, Hero, Item, JournalEntry, Rarity, Stats, WorkoutSession } from '../types';
 import { BALANCE } from './balance';
 import { bossSetSucceeds } from './boss';
 import { advanceDungeon, appendJournal, journalEntry, zoneForFloor, type DungeonEvent } from './dungeon';
@@ -123,14 +112,8 @@ export function resolveWorkout(input: ResolveInput): WorkoutOutcome {
 
   // ── XP ──────────────────────────────────────────────────────
   const bossSetCount = bossSets.length;
-  const setsXp =
-    (completedSets - bossSetCount) * BALANCE.xp.perSet +
-    bossSetCount * BALANCE.xp.perSet * BALANCE.xp.bossSetMultiplier;
-  const completionXp = completed
-    ? session.kind === 'recovery'
-      ? BALANCE.xp.recoveryComplete
-      : BALANCE.xp.workoutComplete
-    : 0;
+  const setsXp = (completedSets - bossSetCount) * BALANCE.xp.perSet + bossSetCount * BALANCE.xp.perSet * BALANCE.xp.bossSetMultiplier;
+  const completionXp = completed ? (session.kind === 'recovery' ? BALANCE.xp.recoveryComplete : BALANCE.xp.workoutComplete) : 0;
   const prXp = Math.min(prs.length, BALANCE.xp.maxPrsPerSession) * BALANCE.xp.perPr;
   const bossXp = bossDefeated ? BALANCE.xp.bossVictory : 0;
   const streakBefore = hero.streak.current;
@@ -203,7 +186,13 @@ export function resolveWorkout(input: ResolveInput): WorkoutOutcome {
   // ── Journal ─────────────────────────────────────────────────
   for (const event of advanced.events) {
     if (event.type === 'room_cleared') {
-      journal.push(journalEntry(today, 'room', `Cleared room ${event.room} of floor ${floorBefore}, felling ${event.monsters.length} ${event.monsters.length === 1 ? 'foe' : 'foes'}.`));
+      journal.push(
+        journalEntry(
+          today,
+          'room',
+          `Cleared room ${event.room} of floor ${floorBefore}, felling ${event.monsters.length} ${event.monsters.length === 1 ? 'foe' : 'foes'}.`,
+        ),
+      );
     } else if (event.type === 'gate_sealed') {
       journal.push(journalEntry(today, 'gate', `The gate of floor ${floorBefore} is sealed. Break a personal record to open it.`));
     } else if (event.type === 'descended') {

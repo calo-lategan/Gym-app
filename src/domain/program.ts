@@ -1,16 +1,7 @@
 import { EXERCISE_BY_ID, getExercise, isAvailable } from './exercises';
 import { uid } from './rng';
 import { bestSubstitute } from './substitution';
-import type {
-  EquipmentId,
-  Experience,
-  Focus,
-  Pattern,
-  PlannedExercise,
-  Program,
-  ProgramDay,
-  SplitId,
-} from './types';
+import type { EquipmentId, Experience, Focus, Pattern, PlannedExercise, Program, ProgramDay, SplitId } from './types';
 
 type Role = 'main' | 'secondary' | 'accessory' | 'core' | 'finisher';
 
@@ -225,13 +216,7 @@ const TEMPLATES: Record<SplitId, DayTemplate[]> = {
 };
 
 // Five days: push, pull, legs, then an upper and a lower day.
-TEMPLATES.ppl_ul = [
-  TEMPLATES.ppl[0],
-  TEMPLATES.ppl[1],
-  TEMPLATES.ppl[2],
-  TEMPLATES.upper_lower[2],
-  TEMPLATES.upper_lower[3],
-];
+TEMPLATES.ppl_ul = [TEMPLATES.ppl[0], TEMPLATES.ppl[1], TEMPLATES.ppl[2], TEMPLATES.upper_lower[2], TEMPLATES.upper_lower[3]];
 
 const FINISHER_PREFER = ['rower', 'bike_intervals', 'kb_swing_intervals', 'burpee', 'mountain_climber', 'high_knees', 'jumping_jack', 'skater_jump'];
 
@@ -249,9 +234,7 @@ interface Scheme {
  */
 export function schemeFor(focus: Focus, role: Role, experience: Experience, timed: boolean): Scheme {
   if (role === 'finisher') {
-    return focus === 'lean'
-      ? { sets: 4, repMin: 30, repMax: 45, restSec: 30 }
-      : { sets: 3, repMin: 30, repMax: 40, restSec: 40 };
+    return focus === 'lean' ? { sets: 4, repMin: 30, repMax: 45, restSec: 30 } : { sets: 3, repMin: 30, repMax: 40, restSec: 40 };
   }
   if (timed) {
     const base = experience === 'beginner' ? 20 : 30;
@@ -311,12 +294,7 @@ export interface ProgramInput {
   equipment: readonly EquipmentId[];
 }
 
-function buildDay(
-  template: DayTemplate,
-  dayIndex: number,
-  input: ProgramInput,
-  withFinisher: boolean,
-): ProgramDay {
+function buildDay(template: DayTemplate, dayIndex: number, input: ProgramInput, withFinisher: boolean): ProgramDay {
   const used = new Set<string>();
   const exercises: PlannedExercise[] = [];
   const slots = withFinisher ? [...template.slots, S('conditioning', 'finisher', ...FINISHER_PREFER)] : template.slots;
