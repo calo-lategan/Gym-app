@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Linking, Platform, Share } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 
 import { Button } from '@/components/button';
 import { Chip, ChipRow } from '@/components/chip';
@@ -14,12 +14,14 @@ import { ToggleRow } from '@/components/toggle-row';
 import { HERO_CLASSES } from '@/domain/game/progression';
 import { ALL_EQUIPMENT, EQUIPMENT_LABELS } from '@/domain/substitution';
 import type { EquipmentId, Experience, Focus } from '@/domain/types';
+import { pickBackupText, shareBackup } from '@/services/backup';
 import { notificationPermission, requestNotificationPermission, sendTestReminder } from '@/services/notifications';
 import {
   exportData,
   regenerateProgram,
   renameHero,
   resetAll,
+  restoreBackup,
   setEquipment,
   setHeroClass,
   setRemindersEnabled,
@@ -90,13 +92,28 @@ export function SettingsScreen() {
   };
 
   const exportAll = async () => {
-    const data = exportData();
     try {
-      await Share.share({ message: data, title: 'Ironwyrm backup' });
+      if (!(await shareBackup(exportData()))) toast({ title: 'Sharing is not available on this device', tone: 'ember', icon: 'warning' });
     } catch {
-      toast({ title: 'Could not open the share sheet', tone: 'ember', icon: 'warning' });
+      toast({ title: 'Could not save the backup', tone: 'ember', icon: 'warning' });
     }
   };
+
+  const restore = () =>
+    confirm(
+      'Restore a backup?',
+      'Everything on this phone is replaced by the backup you pick: hero, history, records and plan.',
+      'Choose backup',
+      async () => {
+        const text = await pickBackupText().catch(() => null);
+        if (text === null) return;
+        const result = restoreBackup(text);
+        if (result.ok)
+          toast({ title: 'Backup restored', detail: `${result.sessions} workouts are back in your battle log.`, icon: 'check', tone: 'verdant' });
+        else toast({ title: 'Nothing was changed', detail: result.reason, icon: 'warning', tone: 'ember' });
+      },
+      true,
+    );
 
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -234,6 +251,7 @@ export function SettingsScreen() {
       <Section title="Your data" detail="Everything stays on this phone. No account, no tracking.">
         <Panel>
           <Button title="Export a backup" icon="export" variant="secondary" onPress={exportAll} testID="settings-export" />
+          <Button title="Restore a backup" icon="refresh" variant="secondary" onPress={restore} testID="settings-restore" />
           <Button
             title="Start over"
             icon="trash"

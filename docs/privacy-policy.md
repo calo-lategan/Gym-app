@@ -29,9 +29,11 @@ not sent through any server.
 
 ## Backups and deletion
 
-- **Export:** Settings, then "Export a backup", creates a text copy of your
-  data that you choose where to send or save. Ironwyrm never sends it anywhere
-  on its own.
+- **Export:** Settings, then "Export a backup", creates a backup file and
+  opens your phone's share sheet so you choose where to save it. Ironwyrm never
+  sends it anywhere on its own.
+- **Restore:** Settings, then "Restore a backup", replaces the data on the
+  device with a backup file you pick.
 - **Delete:** Settings, then "Start over", erases everything from the device.
   Uninstalling the app also deletes all of its data.
 

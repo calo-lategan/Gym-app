@@ -35,6 +35,7 @@ import type {
   WorkoutSession,
 } from '@/domain/types';
 
+import { parseBackup, serializeBackup } from './backup';
 import { initialGameState, initialHistoryState, useGame, useHistory, type ActiveWorkout, type Settings, type StoredOutcome } from './stores';
 
 const today = () => dayKeyOf(new Date());
@@ -862,7 +863,20 @@ export function updateSettings(patch: Partial<Settings>) {
 }
 
 export function exportData(): string {
-  return JSON.stringify({ exportedAt: new Date().toISOString(), game: useGame.getState(), history: useHistory.getState() }, null, 2);
+  return serializeBackup(useGame.getState(), useHistory.getState());
+}
+
+/**
+ * Replaces everything with a backup. Any workout in progress in the backup
+ * is dropped, since it would be stale. Returns why nothing changed if the
+ * file does not check out.
+ */
+export function restoreBackup(text: string): { ok: true; sessions: number } | { ok: false; reason: string } {
+  const parsed = parseBackup(text);
+  if (!parsed.ok) return parsed;
+  useGame.setState({ ...initialGameState(), ...parsed.game, active: null, notices: [] });
+  useHistory.setState({ ...initialHistoryState(), ...parsed.history });
+  return { ok: true, sessions: parsed.history.sessions.length };
 }
 
 export function resetAll() {
