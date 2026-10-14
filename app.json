@@ -68,7 +68,8 @@
       ],
       "expo-sqlite",
       "expo-asset",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,
