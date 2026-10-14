@@ -66,3 +66,8 @@ A gamified gym tracker: real training logic underneath, a 3D dungeon crawler on 
 - `npm run test:e2e` exports the web build and runs Playwright at phone size (SwiftShader WebGL renders the 3D scenes headless).
 - `npm run check:native` exports the Android bundle and fails on Node-only `process` calls, which crash the app on launch even though web and Jest pass (CI runs it).
 - Android-specific behaviour (notifications, haptics, native pickers) needs a development build on a device.
+
+### Shipping
+
+- JavaScript and asset changes reach installed apps as EAS Update over-the-air updates: CI publishes each green push to `claude/gallant-feynman-ycxw6a` to the `preview` channel.
+- Native changes (new native packages, permissions, `app.json` plugins or native fields) need a new build. Bump `version` in `app.json` with them, since `runtimeVersion` follows it and old builds must not receive updates that need the new native code.

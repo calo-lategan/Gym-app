@@ -1,8 +1,10 @@
 import * as SplashScreen from 'expo-splash-screen';
+import { useUpdates } from 'expo-updates';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, Share, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { downloadAppUpdate, restartIntoUpdate } from '@/services/updates';
 import { updateSettings } from '@/state/actions';
 import { colors, radius, spacing, touch } from '@/theme';
 
@@ -46,10 +48,13 @@ function Action({ title, onPress, primary = false }: { title: string; onPress: (
  */
 export function CrashScreen({ error, onRetry }: { error: Error; onRetry: () => void }) {
   const insets = useSafeAreaInsets();
+  const { isUpdatePending } = useUpdates();
   const text = details(error);
 
   useEffect(() => {
     void SplashScreen.hideAsync().catch(() => undefined);
+    // A fix may already be published; fetch it so it can be installed from here.
+    void downloadAppUpdate();
   }, []);
 
   return (
@@ -60,7 +65,8 @@ export function CrashScreen({ error, onRetry }: { error: Error; onRetry: () => v
     >
       <Text variant="title">Something went wrong</Text>
       <Text variant="subhead">Ironwyrm hit an error it could not recover from. Your hero and history are safe on this phone.</Text>
-      <Action title="Try again" primary onPress={onRetry} />
+      {isUpdatePending ? <Action title="Install the update" primary onPress={restartIntoUpdate} /> : null}
+      <Action title="Try again" primary={!isUpdatePending} onPress={onRetry} />
       <Action
         title="Turn off 3D and try again"
         onPress={() => {

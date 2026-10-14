@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CrashScreen } from '@/components/crash-screen';
 import { ToastHost } from '@/components/toast';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
+import { useAppUpdates } from '@/hooks/use-app-updates';
 import { sheetOptions } from '@/navigation/options';
 import { clearCrash, installCrashHandler, markAppOnScreen, useCrash } from '@/services/crash';
 import { recoverFromSceneCrash } from '@/state/actions';
@@ -47,6 +48,7 @@ export default function RootLayout() {
   const crash = useCrash((s) => s.error);
   const ready = fontsLoaded || Boolean(fontError);
   useAppLifecycle(ready && onboarded);
+  useAppUpdates();
 
   useEffect(() => {
     markAppOnScreen();

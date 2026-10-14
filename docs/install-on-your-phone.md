@@ -100,21 +100,33 @@ an Install button (step 7).
 5. Open **Ironwyrm** from your apps. Allow notifications when it asks, so your
    gym reminders work.
 
-## Getting a newer version later, from your phone
+## Getting newer versions
 
-After the first build, you never need the laptop again.
+Most new versions reach your phone on their own, as over-the-air updates. Open
+Ironwyrm and it downloads the update, then restarts itself a few seconds later.
+It never restarts in the middle of a workout or before you finish setting up;
+then the update waits for the next time you open the app.
 
-1. One time only: on expo.dev, open Projects, ironwyrm, then Project settings,
-   GitHub, and connect the **Gym-app** repository (leave the folder as `/`).
-2. Whenever you want the latest version: open Projects, ironwyrm, Builds and
-   tap **Build from GitHub**. Choose the branch
-   `claude/gallant-feynman-ycxw6a`, platform **Android** and profile
-   **preview**, then start the build.
-3. When it finishes, install it exactly like step 7. It replaces the old app
-   and keeps your hero, history and records.
+Updates need a build from 14 October 2026 or later installed once, because
+older builds do not have the updater.
 
-You can still build from the laptop instead. Open a terminal in the `Gym-app`
-folder and run these one at a time, then the build command from step 6:
+### One time: let GitHub publish updates for you
+
+Claude's changes are published as updates automatically once GitHub has a key
+to your Expo account. You never share this key with anyone, Claude included.
+
+1. On expo.dev, click your profile picture, then **Account settings**, then
+   **Access tokens**. Create a token, name it `github`, and copy it.
+2. On github.com, open the **Gym-app** repository, then **Settings**,
+   **Secrets and variables**, **Actions**, and **New repository secret**.
+   Name it `EXPO_TOKEN`, paste the token as the secret and save.
+
+From then on, every change Claude pushes that passes the tests becomes an
+update a few minutes later.
+
+### Publishing an update from the laptop instead
+
+Open a terminal in the `Gym-app` folder and run these one at a time:
 
 ```
 git fetch
@@ -128,9 +140,27 @@ git reset --hard origin/claude/gallant-feynman-ycxw6a
 npm install
 ```
 
+```
+npx eas-cli@latest update --branch preview --platform android --message "Latest version"
+```
+
 The second line makes your copy exactly match the latest code and drops any
 changes the tools made to it. Your hero and progress live on the phone, so
-nothing of yours is lost.
+nothing of yours is lost. Updates skip the build queue, so this takes a minute
+or two.
+
+### When a new build is needed
+
+Some changes cannot travel as an update, such as a new phone feature that needs
+native code. Claude will tell you when that happens. Then run the first three
+lines above, then the build command from step 6, and install the new build like
+step 7. It replaces the old app and keeps your hero, history and records.
+
+You can also start that build from your phone: on expo.dev, open Projects,
+ironwyrm, then Project settings, GitHub, and connect the **Gym-app** repository
+(one time, leave the folder as `/`). After that, open Builds, tap **Build from
+GitHub**, choose the branch `claude/gallant-feynman-ycxw6a`, platform
+**Android** and profile **preview**, and start it.
 
 ## If something goes wrong
 

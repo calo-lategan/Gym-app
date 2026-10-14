@@ -79,6 +79,12 @@
         "projectId": "3320a190-3b16-4a4b-8ef5-c0dd3eeab320"
       }
     },
-    "owner": "calolategan"
+    "owner": "calolategan",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3320a190-3b16-4a4b-8ef5-c0dd3eeab320"
+    }
   }
 }

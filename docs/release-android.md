@@ -61,16 +61,23 @@ testers for 14 days before production access is granted. Plan for it.
 
 ## Updates without a store release
 
-JavaScript and asset changes can ship over the air with EAS Update:
+JavaScript and asset changes ship over the air with EAS Update. `expo-updates`
+is installed, `runtimeVersion` follows the app `version`, and each build
+profile has its own channel (`development`, `preview`, `production`).
 
 ```bash
-npx expo install expo-updates
-npx eas-cli@latest update:configure
-npx eas-cli@latest update --channel production --message "Balance tweaks"
+npx eas-cli@latest update --branch preview --platform android --message "Balance tweaks"
+npx eas-cli@latest update --branch production --platform android --message "Balance tweaks"
 ```
 
+CI publishes every green push to `claude/gallant-feynman-ycxw6a` to the
+`preview` channel when the `EXPO_TOKEN` repository secret is set. The app
+checks for updates whenever it comes to the front and restarts onto a new one,
+except during a workout or onboarding.
+
 Native changes (new native modules, permissions, icons, `app.json` plugin
-changes) always need a new build.
+changes) always need a new build. Bump `version` in `app.json` with them, so
+older builds, which lack the native code, stop receiving updates that need it.
 
 ## Release checklist
 

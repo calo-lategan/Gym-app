@@ -49,3 +49,30 @@ jobs:
             playwright-report
             test-results
           retention-days: 7
+
+  # Ships every green push to the branch the phone installs from as an
+  # over-the-air update on the `preview` channel. Needs an EXPO_TOKEN
+  # repository secret; without it the job does nothing.
+  update:
+    name: Publish over-the-air update
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [check, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/gallant-feynman-ycxw6a'
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - if: env.EXPO_TOKEN == ''
+        run: echo "No EXPO_TOKEN secret, so no update is published. See docs/install-on-your-phone.md."
+      - if: env.EXPO_TOKEN != ''
+        uses: actions/checkout@v4
+      - if: env.EXPO_TOKEN != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.EXPO_TOKEN != ''
+        run: npm ci
+      - if: env.EXPO_TOKEN != ''
+        run: npx eas-cli@latest update --branch preview --platform android --message "$(printf '%s' "$MESSAGE" | head -n 1)" --non-interactive
