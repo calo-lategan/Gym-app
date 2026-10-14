@@ -4,7 +4,7 @@ import { applySet, type ExerciseRecord, type PrEvent } from '../records';
 import { createRng } from '../rng';
 import { defaultSchedule } from '../schedule';
 import { getExercise } from '../exercises';
-import type { Goal, SetLog, WorkoutSession } from '../types';
+import type { DungeonState, Goal, Hero, SetLog, WorkoutSession } from '../types';
 import { BALANCE } from './balance';
 import { bossSetSucceeds, canAttemptBoss, createBoss, createBossChallenge } from './boss';
 import { crossedPhases, dragonHealth, goalProgress, newDragon } from './dragon';
@@ -128,7 +128,7 @@ describe('loot', () => {
 
   it('equipped gear adds to effective stats, salvage pays gold', () => {
     const item = generateItem(createRng(3), 'epic', 'knight', 1, TODAY, 'test', 'weapon');
-    let hero = { ...newHero('A', 'knight'), inventory: [item], equipped: { weapon: item.id } };
+    let hero: Hero = { ...newHero('A', 'knight'), inventory: [item], equipped: { weapon: item.id } };
     expect(effectiveStats(hero).str).toBe(1 + (item.bonus.amount ?? 0));
     hero = { ...hero, equipped: {} };
     const salvaged = salvage(hero, item.id);
@@ -166,14 +166,14 @@ describe('dungeon', () => {
   });
 
   it('a PR after the gate sealed opens it on the next session', () => {
-    let d = { ...newDungeon(), roomsCleared: BALANCE.dungeon.roomsPerFloor };
+    let d: DungeonState = { ...newDungeon(), roomsCleared: BALANCE.dungeon.roomsPerFloor };
     d = advanceDungeon(d, { completed: true, prCount: 1, completedSets: 12, bossDefeated: false, rng }).dungeon;
     expect(d.floor).toBe(2);
   });
 
   it('puts a miniboss on every fifth floor that must be defeated to go deeper', () => {
     expect(isBossFloor(5)).toBe(true);
-    let d = { ...newDungeon(), floor: 5, roomsCleared: 1 };
+    let d: DungeonState = { ...newDungeon(), floor: 5, roomsCleared: 1 };
     const program = generateProgram({ focus: 'grow', experience: 'beginner', daysPerWeek: 3, equipment: ['barbell', 'rack', 'bench'] });
     const createBossFn = (floor: number) => createBoss(floor, '2026-W42', program, {});
     d = advanceDungeon(d, { completed: true, prCount: 3, completedSets: 12, bossDefeated: false, createBoss: createBossFn, rng }).dungeon;

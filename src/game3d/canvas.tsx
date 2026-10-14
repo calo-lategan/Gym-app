@@ -22,7 +22,6 @@ export function GameCanvas({ children, style, camera, frameloop = 'always', onCr
       <Canvas
         style={styles.fill}
         frameloop={frameloop}
-        dpr={[1, 2]}
         camera={{ position: camera?.position ?? [0, 2.4, 6], fov: camera?.fov ?? 42, near: 0.1, far: 80 }}
         gl={{ antialias: true }}
         onCreated={({ gl }) => {
