@@ -59,6 +59,41 @@ The app version (`1.0.0`) lives in `app.json`. Version codes are stored on EAS
 New personal developer accounts must run a closed test with at least 12
 testers for 14 days before production access is granted. Plan for it.
 
+## Selling the calorie tracker and taking tips
+
+The calorie tracker unlock and the three tips are Google Play in-app
+products. Play requires its own billing for anything digital sold inside the
+app. Tips to a developer are not tax-exempt donations, so they go through
+Play Billing too: a PayPal or Ko-fi link inside the Play version would break
+the payments policy.
+
+1. **Payments profile:** Play Console, Settings, Payments profile. Play pays
+   out to it and shows your name as the merchant.
+2. **Upload a build first.** The Monetize section only unlocks once Play has
+   a build that includes the billing library, which the production AAB does.
+3. **Create the products:** Monetize with Play, Products, One-time products.
+   The ids must match the app exactly:
+
+   | Product id | Name | Suggested price |
+   | --- | --- | --- |
+   | `calorie_tracker` | Calorie tracker | 3.99 USD |
+   | `tip_small` | Buy the smith a tea | 0.99 USD |
+   | `tip_medium` | Buy the smith a meal | 2.99 USD |
+   | `tip_large` | Fund a new blade | 6.99 USD |
+
+   Play converts prices for other countries; adjust any you like, then
+   activate each product. Whether a product can be bought again is decided by
+   the app: tips are consumed after payment, the tracker is kept.
+4. **Test without paying:** Settings, License testing, add the Google
+   accounts of your testers. Purchases only work in a build installed from
+   Play (internal testing is enough), never in a sideloaded preview APK.
+
+Development and preview builds include the tracker for free so you can test
+it; only builds on the `production` channel ask for the unlock. The app
+acknowledges every purchase, including payments that clear later and
+purchases made before a reinstall, whenever it opens. Google refunds a
+purchase automatically if it is not acknowledged within three days.
+
 ## Updates without a store release
 
 JavaScript and asset changes ship over the air with EAS Update. `expo-updates`
@@ -93,8 +128,14 @@ older builds, which lack the native code, stop receiving updates that need it.
 
 - **Permissions** are trimmed in `app.json`: no microphone, storage, overlay
   or background media service. What remains: notifications, boot-completed
-  (to restore reminders after a restart), vibration, internet (Metro in
-  development) and audio settings.
+  (to restore reminders after a restart), vibration, internet, audio
+  settings, billing, and Health Connect read access to steps, distance,
+  exercise sessions and weight.
+- **Health Connect** needs a declaration in Play Console (App content,
+  Health apps) that says why each data type is read: steps and distance for
+  walking calories, exercise sessions for running calories, and weight for
+  the calorie target. Samsung Health, Google Fit and most watches sync into
+  Health Connect, so one integration covers them.
 - **Reminders** use local scheduled notifications without the exact-alarm
   permission, so Android may deliver them a few minutes late to save battery.
 - **16 KB memory pages:** Play requires native libraries aligned for 16 KB

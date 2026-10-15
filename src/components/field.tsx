@@ -57,9 +57,14 @@ export function Field({
           autoFocus={autoFocus}
           maxLength={maxLength}
           selectionColor={colors.torch}
-          style={{ flex: 1, color: colors.bone, fontSize: 18, fontWeight: '600', paddingVertical: spacing.ms }}
+          // minWidth 0 lets the input shrink below its intrinsic width on web, so a suffix never overflows.
+          style={{ flex: 1, minWidth: 0, color: colors.bone, fontSize: 18, fontWeight: '600', paddingVertical: spacing.ms }}
         />
-        {suffix ? <Text variant="subhead">{suffix}</Text> : null}
+        {suffix ? (
+          <Text variant="subhead" style={{ flexShrink: 0, marginLeft: spacing.xs }}>
+            {suffix}
+          </Text>
+        ) : null}
       </View>
       {error ? (
         <Text variant="caption" color={colors.ember}>

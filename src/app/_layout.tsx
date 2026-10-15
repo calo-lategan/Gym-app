@@ -92,6 +92,7 @@ export default function RootLayout() {
             <Stack.Screen name="history" options={{ title: 'Battle log' }} />
             <Stack.Screen name="records" options={{ title: 'Records' }} />
             <Stack.Screen name="shop" options={{ title: 'Merchant' }} />
+            <Stack.Screen name="energy" options={{ title: 'Energy' }} />
             <Stack.Screen name="slay" options={{ title: 'A new foe', presentation: 'modal' }} />
           </Stack.Protected>
           <Stack.Protected guard={!onboarded}>

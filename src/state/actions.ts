@@ -44,6 +44,7 @@ import {
   initialGameState,
   initialHistoryState,
   useActivity,
+  useEntitlements,
   useGame,
   useHistory,
   type ActiveWorkout,
@@ -954,6 +955,17 @@ export function logFood(food: { kcal: number; proteinG: number; label?: string }
 
 export function removeFood(id: string) {
   useHistory.setState({ foods: useHistory.getState().foods.filter((f) => f.id !== id) });
+}
+
+// ── Purchases ─────────────────────────────────────────────────────
+// Purchases belong to the Google account, so Start over leaves them alone.
+
+export function setTrackerOwned(owned: boolean) {
+  useEntitlements.setState({ trackerOwned: owned });
+}
+
+export function recordTip() {
+  useEntitlements.setState({ tipsGiven: useEntitlements.getState().tipsGiven + 1 });
 }
 
 /** Double-progression suggestion for an exercise based on its most recent session. */

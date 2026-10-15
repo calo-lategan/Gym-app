@@ -93,6 +93,7 @@ export function CampScreen() {
       <View style={{ flex: 1 }} pointerEvents="box-none">
         <View style={{ position: 'absolute', right: spacing.md, top: spacing.md, gap: spacing.sm }}>
           <IconButton icon="scale" label="Weigh in" tone="filled" onPress={() => router.push('/weigh-in')} testID="weigh-in" />
+          <IconButton icon="food" label="Energy" tone="filled" onPress={() => router.push('/energy')} testID="open-energy" />
           <IconButton icon="dragon" label="Dragon lair" tone="filled" color={colors.ember} onPress={() => router.push('/lair')} testID="open-lair" />
         </View>
       </View>

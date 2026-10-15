@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 
 import { toast } from '@/components/toast';
+import { settleStorePurchases } from '@/hooks/use-purchases';
 import { configureNotifications, syncReminders } from '@/services/notifications';
 import { initSound } from '@/services/sound';
 import { dismissNotices, settleDaily } from '@/state/actions';
@@ -9,7 +10,7 @@ import { useGame } from '@/state/stores';
 
 /**
  * Daily upkeep whenever the app comes to the foreground: settle the streak,
- * refresh the weekly miniboss and re-plan reminders.
+ * refresh the weekly miniboss, re-plan reminders and finish store purchases.
  */
 export function useAppLifecycle(active: boolean) {
   useEffect(() => {
@@ -25,6 +26,7 @@ export function useAppLifecycle(active: boolean) {
       for (const notice of notices) toast({ title: notice, icon: 'bell' });
       if (notices.length) dismissNotices();
       void syncReminders();
+      void settleStorePurchases();
     };
     run();
     const sub = AppState.addEventListener('change', (state) => {

@@ -14,7 +14,9 @@ import { ToggleRow } from '@/components/toggle-row';
 import { HERO_CLASSES } from '@/domain/game/progression';
 import { ALL_EQUIPMENT, EQUIPMENT_LABELS } from '@/domain/substitution';
 import type { EquipmentId, Experience, Focus } from '@/domain/types';
+import { usePurchases } from '@/hooks/use-purchases';
 import { pickBackupText, shareBackup } from '@/services/backup';
+import { TIP_SKUS } from '@/services/billing';
 import { notificationPermission, requestNotificationPermission, sendTestReminder } from '@/services/notifications';
 import {
   exportData,
@@ -28,7 +30,7 @@ import {
   updateProfile,
   updateSettings,
 } from '@/state/actions';
-import { useGame } from '@/state/stores';
+import { useEntitlements, useGame } from '@/state/stores';
 import { colors } from '@/theme';
 
 const FOCI: { id: Focus; label: string }[] = [
@@ -62,6 +64,45 @@ function EquipmentChips({ kind }: { kind: 'gymEquipment' | 'homeEquipment' }) {
         <Chip key={q} label={EQUIPMENT_LABELS[q]} selected={selected.includes(q)} onPress={() => toggle(q)} testID={`${kind}-${q}`} />
       ))}
     </ChipRow>
+  );
+}
+
+const TIP_TITLES: Record<(typeof TIP_SKUS)[number], string> = {
+  tip_small: 'Buy the smith a tea',
+  tip_medium: 'Buy the smith a meal',
+  tip_large: 'Fund a new blade',
+};
+
+function SupportSection() {
+  const { buy, busy, priceOf } = usePurchases();
+  const tipsGiven = useEntitlements((s) => s.tipsGiven);
+  const available = TIP_SKUS.some((sku) => priceOf(sku));
+  return (
+    <Section title="Support Ironwyrm" detail="Made by one person, with no ads. If it helps you train, a tip keeps it going.">
+      <Panel>
+        {available ? (
+          TIP_SKUS.map((sku) => (
+            <Button
+              key={sku}
+              title={`${TIP_TITLES[sku]}, ${priceOf(sku)}`}
+              icon="gift"
+              variant="secondary"
+              loading={busy === sku}
+              onPress={() => void buy(sku)}
+              testID={`tip-${sku}`}
+            />
+          ))
+        ) : (
+          <Text variant="caption">Tips work in the Google Play version of Ironwyrm.</Text>
+        )}
+        {tipsGiven > 0 ? (
+          <Text variant="caption" color={colors.torch}>
+            Thank you for {tipsGiven === 1 ? 'your tip' : `${tipsGiven} tips`}.
+          </Text>
+        ) : null}
+        <Button title="Calorie tracker" icon="food" variant="ghost" onPress={() => router.push('/energy')} testID="settings-energy" />
+      </Panel>
+    </Section>
   );
 }
 
@@ -247,6 +288,8 @@ export function SettingsScreen() {
           <ToggleRow label="24-hour clock" icon="clock" value={settings.use24h} onValueChange={(use24h) => updateSettings({ use24h })} />
         </Panel>
       </Section>
+
+      <SupportSection />
 
       <Section title="Your data" detail="Everything stays on this phone. No account, no tracking.">
         <Panel>

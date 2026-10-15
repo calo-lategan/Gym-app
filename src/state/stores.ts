@@ -171,3 +171,20 @@ export const useActivity = create<ActivityState>()(
     version: 1,
   }),
 );
+
+export interface EntitlementState {
+  /** The calorie tracker was bought with this Google account. */
+  trackerOwned: boolean;
+  tipsGiven: number;
+}
+
+export const initialEntitlementState = (): EntitlementState => ({ trackerOwned: false, tipsGiven: 0 });
+
+/** Purchases belong to the Google account, so they survive Start over and stay out of backups. */
+export const useEntitlements = create<EntitlementState>()(
+  persist(initialEntitlementState, {
+    name: 'ironwyrm.entitlements',
+    storage,
+    version: 1,
+  }),
+);

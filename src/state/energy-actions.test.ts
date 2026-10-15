@@ -1,8 +1,8 @@
 import type { ActivityDay } from '@/domain/activity';
 
-import { applyActivitySync, logFood, removeFood, resetAll, setManualSteps } from './actions';
+import { applyActivitySync, logFood, recordTip, removeFood, resetAll, setManualSteps, setTrackerOwned } from './actions';
 import { parseBackup, serializeBackup } from './backup';
-import { useActivity, useGame, useHistory } from './stores';
+import { useActivity, useEntitlements, useGame, useHistory } from './stores';
 
 // Hoisted above the imports by Jest.
 jest.mock('expo-sqlite/localStorage/install', () => {
@@ -50,5 +50,16 @@ describe('energy actions', () => {
     logFood({ kcal: 500, proteinG: 30, label: 'Rice and chicken' }, NOW);
     const parsed = parseBackup(serializeBackup(useGame.getState(), useHistory.getState()));
     expect(parsed.ok && parsed.history.foods.map((f) => f.label)).toEqual(['Rice and chicken']);
+  });
+});
+
+describe('purchase actions', () => {
+  it('keeps the unlock and tips through Start over', () => {
+    useEntitlements.setState({ trackerOwned: false, tipsGiven: 0 });
+    setTrackerOwned(true);
+    recordTip();
+    recordTip();
+    resetAll();
+    expect(useEntitlements.getState()).toMatchObject({ trackerOwned: true, tipsGiven: 2 });
   });
 });

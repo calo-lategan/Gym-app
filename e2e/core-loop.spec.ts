@@ -112,4 +112,25 @@ test.describe('core loop', () => {
     const swapped = after.program.days[0].exercises.find((e: { id: string }) => e.id === slot.id);
     expect(swapped.exerciseId).not.toBe(slot.exerciseId);
   });
+
+  test('the energy tracker estimates the burn and counts food against the target', async ({ page }) => {
+    await onboard(page);
+    await tap(page, 'open-energy');
+    await expect(page.getByTestId('energy-screen')).toBeVisible();
+    const burned = Number((await page.getByTestId('energy-burned').innerText()).replace(/,/g, ''));
+    expect(burned).toBeGreaterThan(1000);
+
+    // The web build has no step tracker, so steps are typed in; walking adds to the burn.
+    await page.getByTestId('energy-steps-plus').click();
+    await expect.poll(async () => Number((await page.getByTestId('energy-burned').innerText()).replace(/,/g, ''))).toBeGreaterThan(burned);
+
+    const target = Number((await page.getByTestId('energy-target').innerText()).replace(/,/g, ''));
+    expect(target).toBeGreaterThan(1000);
+    await page.getByTestId('food-label').fill('Rice and chicken');
+    await page.getByTestId('food-kcal').fill('650');
+    await page.getByTestId('food-protein').fill('45');
+    await tap(page, 'food-add');
+    await expect(page.getByText('Rice and chicken')).toBeVisible();
+    await expect(page.getByText(`650 eaten. ${(target - 650).toLocaleString('en-US')} left.`)).toBeVisible();
+  });
 });
