@@ -57,6 +57,7 @@ A gamified gym tracker: real training logic underneath, a 3D dungeon crawler on 
 - UI copy: sentence case, no emoji, no em dashes, no arrows appended to button labels.
 - Use theme tokens for colour, spacing, radius and type. Touch targets are at least 48dp.
 - Every reward moment pairs a sound (`services/sound.ts`), a haptic and a visual.
+- Area music is data: slots, fallbacks and the screen-to-slot map live in `domain/music.ts`; files in `assets/music` named after a slot fill it with no code change (`services/music-files.ts` collects them with `require.context`).
 - Nested `entering` animations do not play on web while their parent is entering. Reveal children over time by mounting them later (see `useStagger` in the victory screen).
 - Formatting is Prettier (`npm run format`); `npm run check` must pass before committing.
 

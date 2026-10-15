@@ -1,5 +1,4 @@
 import { router, useIsFocused } from 'expo-router';
-import { useEffect } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -17,7 +16,6 @@ import { formatClock } from '@/domain/schedule';
 import { formatWeight } from '@/domain/strength';
 import { CampScene, type CampMood } from '@/game3d/scenes/camp-scene';
 import { estimateMinutes, useDragonProgress, useTodayStatus } from '@/hooks/use-game-data';
-import { startAmbience, stopAmbience } from '@/services/sound';
 import { useGame } from '@/state/stores';
 import { colors, fonts, spacing } from '@/theme';
 
@@ -33,12 +31,6 @@ export function CampScreen() {
   const status = useTodayStatus();
   const { progress } = useDragonProgress();
   const zone = zoneForFloor(dungeon.floor);
-
-  useEffect(() => {
-    if (focused) startAmbience();
-    else stopAmbience();
-    return () => stopAmbience();
-  }, [focused]);
 
   const mood: CampMood = status.doneToday ? 'victorious' : status.trainingDay ? 'ready' : 'resting';
   const sets = status.day?.exercises.reduce((n, e) => n + e.sets, 0) ?? 0;

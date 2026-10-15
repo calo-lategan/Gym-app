@@ -14,6 +14,8 @@ import type { CheckIn, DayKey, DragonState, DungeonState, Hero, Profile, Program
 
 export interface Settings {
   sound: boolean;
+  /** Area music from assets/music. */
+  music: boolean;
   ambience: boolean;
   haptics: boolean;
   /** `lite` skips 3D during workouts to save battery. */
@@ -109,7 +111,7 @@ export const initialGameState = (): GameState => ({
   dungeon: newDungeon(),
   dragon: null,
   records: {},
-  settings: { sound: true, ambience: true, haptics: true, graphics: 'full', use24h: false },
+  settings: { sound: true, music: true, ambience: true, haptics: true, graphics: 'full', use24h: false },
   active: null,
   lastOutcome: null,
   lastSettledDay: null,
@@ -123,6 +125,11 @@ export const useGame = create<GameState>()(
     name: 'ironwyrm.game',
     storage,
     version: 1,
+    // Settings added after a player's last save start at their defaults.
+    merge: (persisted, current) => {
+      const saved = (persisted ?? {}) as Partial<GameState>;
+      return { ...current, ...saved, settings: { ...current.settings, ...saved.settings } };
+    },
   }),
 );
 

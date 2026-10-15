@@ -58,6 +58,8 @@ const ZONES: Omit<Zone, 'index'>[] = [
   },
 ];
 
+export const ZONE_COUNT = ZONES.length;
+
 const BOSS_NAMES = [
   'Grukk, the Rattling Warchief',
   'Mordrel, Bone Warden',

@@ -14,9 +14,10 @@ import { ToggleRow } from '@/components/toggle-row';
 import { HERO_CLASSES } from '@/domain/game/progression';
 import { ALL_EQUIPMENT, EQUIPMENT_LABELS } from '@/domain/substitution';
 import type { EquipmentId, Experience, Focus } from '@/domain/types';
-import { usePurchases } from '@/hooks/use-purchases';
+import { STORE_BUILD, usePurchases } from '@/hooks/use-purchases';
 import { pickBackupText, shareBackup } from '@/services/backup';
 import { TIP_SKUS } from '@/services/billing';
+import { hasMusic } from '@/services/music';
 import { notificationPermission, requestNotificationPermission, sendTestReminder } from '@/services/notifications';
 import {
   exportData,
@@ -269,9 +270,19 @@ export function SettingsScreen() {
             onValueChange={(sound) => updateSettings({ sound })}
             testID="settings-sound"
           />
+          {hasMusic() || !STORE_BUILD ? (
+            <ToggleRow
+              label="Music"
+              detail={hasMusic() ? 'A theme for every area of the dungeon.' : 'No tracks yet. Add your own in Soundtrack.'}
+              icon="music"
+              value={settings.music}
+              onValueChange={(music) => updateSettings({ music })}
+              testID="settings-music"
+            />
+          ) : null}
           <ToggleRow
             label="Dungeon ambience"
-            detail="Low background drone at camp."
+            detail="A low drone at camp and in the lair when no music plays."
             icon="moon"
             value={settings.ambience}
             onValueChange={(ambience) => updateSettings({ ambience })}
@@ -286,6 +297,9 @@ export function SettingsScreen() {
             testID="settings-graphics"
           />
           <ToggleRow label="24-hour clock" icon="clock" value={settings.use24h} onValueChange={(use24h) => updateSettings({ use24h })} />
+          {hasMusic() || !STORE_BUILD ? (
+            <Button title="Soundtrack" icon="music" variant="ghost" onPress={() => router.push('/soundtrack')} testID="settings-soundtrack" />
+          ) : null}
         </Panel>
       </Section>
 

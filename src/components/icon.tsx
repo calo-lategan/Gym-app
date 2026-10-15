@@ -71,6 +71,8 @@ const ICONS = {
   target: { ios: 'scope', android: 'target', web: 'target' },
   mute: { ios: 'speaker.slash.fill', android: 'volume_off', web: 'volume_off' },
   sound: { ios: 'speaker.wave.2.fill', android: 'volume_up', web: 'volume_up' },
+  music: { ios: 'music.note', android: 'music_note', web: 'music_note' },
+  musicOff: { ios: 'speaker.slash.fill', android: 'music_off', web: 'music_off' },
   vibrate: { ios: 'iphone.radiowaves.left.and.right', android: 'vibration', web: 'vibration' },
   export: { ios: 'square.and.arrow.up', android: 'ios_share', web: 'ios_share' },
   refresh: { ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' },

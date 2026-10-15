@@ -25,6 +25,10 @@ envelopes). No third-party audio is used. Rebuild with:
 
     python3 scripts/build-sounds.py
 
+## Music (assets/music)
+
+Original music for Ironwyrm. See `assets/music/README.md` for the slots.
+
 ## Fonts
 
 Grenze Gotisch by Omnibus-Type, SIL Open Font License 1.1, via

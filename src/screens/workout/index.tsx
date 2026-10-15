@@ -18,6 +18,7 @@ import { checkLoadJump } from '@/domain/science';
 import { displayWeightValue, formatWeight, fromDisplayWeight, KG_PER_LB } from '@/domain/strength';
 import { BattleScene } from '@/game3d/scenes/battle-scene';
 import { haptics } from '@/services/haptics';
+import { hasMusic } from '@/services/music';
 import { cancelRestAlert, scheduleRestAlert } from '@/services/notifications';
 import { play, preload } from '@/services/sound';
 import {
@@ -34,6 +35,7 @@ import {
   skipRest,
   startSet,
   suggestionFor,
+  updateSettings,
 } from '@/state/actions';
 import { useGame } from '@/state/stores';
 import { colors, fonts, radius, spacing } from '@/theme';
@@ -58,6 +60,7 @@ export function WorkoutScreen() {
   const unit = useGame((s) => s.profile.unit);
   const records = useGame((s) => s.records);
   const graphics = useGame((s) => s.settings.graphics);
+  const musicOn = useGame((s) => s.settings.music);
   const [now, setNow] = useState(() => Date.now());
   const [floaters, setFloaters] = useState<Floater[]>([]);
   const [prBanner, setPrBanner] = useState<PrEvent[] | null>(null);
@@ -254,6 +257,15 @@ export function WorkoutScreen() {
           }}
         >
           <IconButton icon="close" label="Leave workout" tone="filled" onPress={onQuit} testID="quit-workout" />
+          {hasMusic() ? (
+            <IconButton
+              icon={musicOn ? 'music' : 'musicOff'}
+              label={musicOn ? 'Mute music' : 'Play music'}
+              tone="filled"
+              onPress={() => updateSettings({ music: !musicOn })}
+              testID="toggle-music"
+            />
+          ) : null}
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text variant="label" color={colors.bone} style={{ textShadowColor: '#000', textShadowRadius: 6 }}>
               {session.title}

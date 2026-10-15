@@ -27,7 +27,6 @@ const SOURCES = {
   victory: require('@/assets/sounds/victory.mp3'),
   statUp: require('@/assets/sounds/stat-up.mp3'),
 } as const;
-const AMBIENCE = require('@/assets/sounds/ambience-dungeon.mp3');
 
 export type SoundName = keyof typeof SOURCES;
 
@@ -35,7 +34,6 @@ export type SoundName = keyof typeof SOURCES;
 const POOL_SIZE: Partial<Record<SoundName, number>> = { xpTick: 3, coin: 3, hit: 2, tap: 2, statUp: 2 };
 
 const players = new Map<SoundName, { list: AudioPlayer[]; next: number }>();
-let ambience: AudioPlayer | null = null;
 let ready = false;
 
 export async function initSound() {
@@ -91,30 +89,6 @@ export function play(name: SoundName, volume = 1) {
 /** Warm up the players used in the first seconds of a workout. */
 export function preload(names: SoundName[]) {
   for (const name of names) playerFor(name);
-}
-
-export function startAmbience() {
-  const settings = useGame.getState().settings;
-  // Browsers block autoplay before a gesture, so ambience is a native-only touch.
-  if (!settings.sound || !settings.ambience || process.env.EXPO_OS === 'web') return;
-  try {
-    if (!ambience) {
-      ambience = createAudioPlayer(AMBIENCE);
-      ambience.loop = true;
-      ambience.volume = 0.35;
-    }
-    ambience.play();
-  } catch {
-    // ignore
-  }
-}
-
-export function stopAmbience() {
-  try {
-    ambience?.pause();
-  } catch {
-    // ignore
-  }
 }
 
 export const lootSound = (rarity: string): SoundName =>

@@ -51,6 +51,20 @@ It targets Android first (Google Play), and also runs on iOS and the web.
   synthesized sound and haptics.
 - Floors and gates, weekly minibosses and a procedural dragon whose crystal
   ward sheds shards as your real goal gets closer.
+- A music slot for every area (camp, the map, each zone's battles, guardian
+  fights, victory, the lair, the merchant) that crossfades as you move. Drop
+  tracks into `assets/music`; its README lists the slots.
+
+**Energy**
+
+- Steps, distance, runs and weigh-ins from Health Connect, which Samsung
+  Health, Google Fit and most watches sync into, or typed in by hand.
+- Today's burn: resting (Mifflin-St Jeor), daily living, walking and running
+  (ACSM equations) and training (MET values).
+- A calorie and protein target for your goal that recalibrates from your food
+  log and weight trend after two weeks and eases off on low-recovery days.
+- A quick food log and a week of burn against intake. The target is a
+  one-time unlock in the Google Play version; tips are welcome in Settings.
 
 **Daily use**
 
@@ -100,7 +114,7 @@ src/
   game3d/       React Three Fiber: canvas, models, effects, dragon, scenes.
   services/     Sound, haptics and notifications.
   theme/        Design tokens.
-assets/         Optimized 3D models, sounds and icons.
+assets/         Optimized 3D models, sounds, icons and music slots.
 scripts/        Asset pipelines (models, sounds, icons).
 e2e/            Playwright tests against the web export.
 docs/           Store listing, privacy policy and the release guide.

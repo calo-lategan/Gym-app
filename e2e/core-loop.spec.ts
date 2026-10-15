@@ -86,6 +86,7 @@ test.describe('core loop', () => {
     await visit('/move-session', 'move-session-screen');
     await visit('/lair', 'lair-screen');
     await visit('/privacy', 'privacy-screen');
+    await visit('/soundtrack', 'soundtrack-screen');
 
     const state = await page.evaluate(() => JSON.parse(localStorage.getItem('ironwyrm.game') ?? '{}').state);
     const day = state.program.days[0];

@@ -10,6 +10,7 @@ import { CrashScreen } from '@/components/crash-screen';
 import { ToastHost } from '@/components/toast';
 import { useAppLifecycle } from '@/hooks/use-app-lifecycle';
 import { useAppUpdates } from '@/hooks/use-app-updates';
+import { useAreaMusic } from '@/hooks/use-area-music';
 import { sheetOptions } from '@/navigation/options';
 import { clearCrash, installCrashHandler, markAppOnScreen, useCrash } from '@/services/crash';
 import { recoverFromSceneCrash } from '@/state/actions';
@@ -49,6 +50,7 @@ export default function RootLayout() {
   const ready = fontsLoaded || Boolean(fontError);
   useAppLifecycle(ready && onboarded);
   useAppUpdates();
+  useAreaMusic(ready);
 
   useEffect(() => {
     markAppOnScreen();
@@ -93,6 +95,7 @@ export default function RootLayout() {
             <Stack.Screen name="records" options={{ title: 'Records' }} />
             <Stack.Screen name="shop" options={{ title: 'Merchant' }} />
             <Stack.Screen name="energy" options={{ title: 'Energy' }} />
+            <Stack.Screen name="soundtrack" options={{ title: 'Soundtrack' }} />
             <Stack.Screen name="slay" options={{ title: 'A new foe', presentation: 'modal' }} />
           </Stack.Protected>
           <Stack.Protected guard={!onboarded}>
