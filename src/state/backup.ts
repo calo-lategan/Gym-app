@@ -59,6 +59,7 @@ export function parseBackup(text: string): ParsedBackup {
       sessions: list(history.sessions),
       weighIns: list(history.weighIns),
       checkIns: list(history.checkIns),
+      foods: list(history.foods),
     } as HistoryState,
     exportedAt: typeof raw.exportedAt === 'string' ? raw.exportedAt : null,
   };

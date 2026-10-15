@@ -3,6 +3,7 @@ import 'expo-sqlite/localStorage/install';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import type { ActivityDay } from '@/domain/activity';
 import { newDungeon } from '@/domain/game/dungeon';
 import { newHero } from '@/domain/game/progression';
 import type { DungeonEvent } from '@/domain/game/dungeon';
@@ -125,18 +126,47 @@ export const useGame = create<GameState>()(
   }),
 );
 
+/** Something eaten, logged as calories and protein. */
+export interface FoodEntry {
+  id: string;
+  dayKey: DayKey;
+  at: number;
+  kcal: number;
+  proteinG: number;
+  label: string;
+}
+
 export interface HistoryState {
   sessions: WorkoutSession[];
   weighIns: WeighIn[];
   checkIns: CheckIn[];
+  foods: FoodEntry[];
 }
 
-export const initialHistoryState = (): HistoryState => ({ sessions: [], weighIns: [], checkIns: [] });
+export const initialHistoryState = (): HistoryState => ({ sessions: [], weighIns: [], checkIns: [], foods: [] });
 
 /** Long-lived history lives in its own store so per-set saves stay small. */
 export const useHistory = create<HistoryState>()(
   persist(initialHistoryState, {
     name: 'ironwyrm.history',
+    storage,
+    version: 1,
+  }),
+);
+
+export interface ActivityState {
+  /** Health Connect access was granted at least once. */
+  connected: boolean;
+  lastSync: number | null;
+  days: Record<DayKey, ActivityDay>;
+}
+
+export const initialActivityState = (): ActivityState => ({ connected: false, lastSync: null, days: {} });
+
+/** Steps, distance and runs from the phone's health store, kept so screens open with the last sync. */
+export const useActivity = create<ActivityState>()(
+  persist(initialActivityState, {
+    name: 'ironwyrm.activity',
     storage,
     version: 1,
   }),

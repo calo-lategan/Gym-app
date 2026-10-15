@@ -27,7 +27,7 @@ export function scoreReadiness(input: ReadinessInput): ReadinessResult {
   const soreness = [1, 0.85, 0.6, 0.3][worstSoreness] ?? 0.3;
 
   const score = Math.round(100 * (0.35 * sleep + 0.3 * energy + 0.15 * calm + 0.2 * soreness));
-  const band: ReadinessBand = score >= 70 ? 'ready' : score >= 55 ? 'steady' : score >= 35 ? 'tired' : 'drained';
+  const band = readinessBand(score);
 
   const notes: string[] = [];
   if (hours < 6) {
@@ -49,6 +49,10 @@ export function scoreReadiness(input: ReadinessInput): ReadinessResult {
 }
 
 const clamp15 = (v: number) => Math.min(5, Math.max(1, v));
+
+export function readinessBand(score: number): ReadinessBand {
+  return score >= 70 ? 'ready' : score >= 55 ? 'steady' : score >= 35 ? 'tired' : 'drained';
+}
 
 export interface AdjustedDay {
   day: ProgramDay;

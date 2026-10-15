@@ -1,4 +1,5 @@
-import { dayKeyOf, isoWeekKey } from '@/domain/dates';
+import type { ActivityDay } from '@/domain/activity';
+import { addDays, dayKeyOf, isoWeekKey } from '@/domain/dates';
 import { findExercise, getExercise } from '@/domain/exercises';
 import { canAttemptBoss, createBoss, refreshBossForWeek } from '@/domain/game/boss';
 import { crossedPhases, goalProgress, newDragon } from '@/domain/game/dragon';
@@ -19,6 +20,7 @@ import { averageWeight } from '@/domain/science';
 import { roundLoad, suggestNextTarget, suggestStartingLoad } from '@/domain/strength';
 import type {
   ClockTime,
+  DayKey,
   EquipmentId,
   Experience,
   Focus,
@@ -37,7 +39,18 @@ import type {
 
 import { parseBackup, serializeBackup } from './backup';
 import { takeSceneCrashFlag } from './scene-watch';
-import { initialGameState, initialHistoryState, useGame, useHistory, type ActiveWorkout, type Settings, type StoredOutcome } from './stores';
+import {
+  initialActivityState,
+  initialGameState,
+  initialHistoryState,
+  useActivity,
+  useGame,
+  useHistory,
+  type ActiveWorkout,
+  type FoodEntry,
+  type Settings,
+  type StoredOutcome,
+} from './stores';
 
 const today = () => dayKeyOf(new Date());
 
@@ -899,6 +912,48 @@ export function restoreBackup(text: string): { ok: true; sessions: number } | { 
 export function resetAll() {
   useGame.setState(initialGameState());
   useHistory.setState(initialHistoryState());
+  useActivity.setState(initialActivityState());
+}
+
+// ── Energy ────────────────────────────────────────────────────────
+
+/** Tracker days older than this are dropped; the energy model looks back four weeks. */
+const ACTIVITY_KEEP_DAYS = 60;
+
+/** Stores freshly synced tracker days. A day typed in by hand stays unless the tracker counted steps that day. */
+export function applyActivitySync(days: readonly ActivityDay[], now = Date.now()) {
+  const current = useActivity.getState().days;
+  const next: Record<DayKey, ActivityDay> = { ...current };
+  for (const day of days) {
+    if (current[day.dayKey]?.source === 'manual' && day.steps === 0) continue;
+    next[day.dayKey] = day;
+  }
+  const oldest = addDays(dayKeyOf(now), -ACTIVITY_KEEP_DAYS);
+  for (const key of Object.keys(next)) if (key < oldest) delete next[key];
+  useActivity.setState({ connected: true, lastSync: now, days: next });
+}
+
+export function setManualSteps(dayKey: DayKey, steps: number) {
+  const day: ActivityDay = { dayKey, steps: Math.max(0, Math.round(steps)), distanceKm: null, runs: [], source: 'manual' };
+  useActivity.setState({ days: { ...useActivity.getState().days, [dayKey]: day } });
+}
+
+export function logFood(food: { kcal: number; proteinG: number; label?: string }, now = Date.now()): FoodEntry | null {
+  if (!(food.kcal > 0)) return null;
+  const entry: FoodEntry = {
+    id: uid(),
+    dayKey: dayKeyOf(now),
+    at: now,
+    kcal: Math.round(food.kcal),
+    proteinG: Math.max(0, Math.round(food.proteinG)),
+    label: food.label?.trim() || 'Meal',
+  };
+  useHistory.setState({ foods: [...useHistory.getState().foods, entry] });
+  return entry;
+}
+
+export function removeFood(id: string) {
+  useHistory.setState({ foods: useHistory.getState().foods.filter((f) => f.id !== id) });
 }
 
 /** Double-progression suggestion for an exercise based on its most recent session. */
