@@ -51,7 +51,7 @@ function ScaleRow({
             key={l}
             testID={`${testID}-${i + 1}`}
             accessibilityRole="radio"
-            accessibilityState={{ selected: value === i + 1 }}
+            aria-checked={value === i + 1}
             accessibilityLabel={`${label}: ${l}`}
             onPress={() => {
               haptics.tap();

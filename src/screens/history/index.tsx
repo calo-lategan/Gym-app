@@ -82,7 +82,7 @@ function SessionCard({ session }: { session: WorkoutSession }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ expanded: open }}
+      aria-expanded={open}
       onPress={() => {
         haptics.tap();
         setOpen((o) => !o);

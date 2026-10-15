@@ -26,7 +26,7 @@ export function OptionCard({
     <Pressable
       testID={testID}
       accessibilityRole="radio"
-      accessibilityState={{ selected }}
+      aria-checked={selected}
       accessibilityLabel={`${title}. ${detail}`}
       onPress={() => {
         haptics.tap();

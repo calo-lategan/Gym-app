@@ -1,3 +1,8 @@
+import { recoverFromSceneCrash, SCENE_CRASH_NOTICE, updateSettings } from './actions';
+import { markSceneSettled, markSceneStarting, takeSceneCrashFlag } from './scene-watch';
+import { useGame } from './stores';
+
+// Hoisted above the imports by Jest.
 jest.mock('expo-sqlite/localStorage/install', () => {
   const data = new Map<string, string>();
   (globalThis as { localStorage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> }).localStorage = {
@@ -7,10 +12,6 @@ jest.mock('expo-sqlite/localStorage/install', () => {
   };
   return {};
 });
-
-import { recoverFromSceneCrash, SCENE_CRASH_NOTICE, updateSettings } from './actions';
-import { markSceneSettled, markSceneStarting, takeSceneCrashFlag } from './scene-watch';
-import { useGame } from './stores';
 
 describe('scene crash guard', () => {
   beforeEach(() => {

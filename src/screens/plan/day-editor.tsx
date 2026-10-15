@@ -31,7 +31,7 @@ function ExerciseRow({ dayId, planned, index, count }: { dayId: string; planned:
       <Panel>
         <Pressable
           accessibilityRole="button"
-          accessibilityState={{ expanded: open }}
+          aria-expanded={open}
           accessibilityLabel={`${exercise.name}, ${planned.sets} sets of ${planned.repMin} to ${planned.repMax} ${unitLabel}. ${open ? 'Collapse' : 'Edit'}`}
           onPress={() => {
             haptics.tap();

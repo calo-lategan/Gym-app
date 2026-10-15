@@ -306,7 +306,7 @@ export function WorkoutScreen() {
               key={`${e.slotId}-${i}`}
               testID={`exercise-tab-${i}`}
               accessibilityRole="tab"
-              accessibilityState={{ selected }}
+              aria-selected={selected}
               accessibilityLabel={`${getExercise(e.exerciseId).name}, ${e.sets.length} of ${e.targetSets} sets`}
               onPress={() => {
                 haptics.tap();

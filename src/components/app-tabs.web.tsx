@@ -48,7 +48,7 @@ const TabButton = forwardRef<View, TabTriggerSlotProps & { icon: IconName; label
       {...props}
       accessibilityRole="tab"
       accessibilityLabel={label}
-      accessibilityState={{ selected: isFocused }}
+      aria-selected={isFocused}
       style={{ flex: 1, alignItems: 'center', paddingVertical: spacing.sm, gap: 2 }}
     >
       <View

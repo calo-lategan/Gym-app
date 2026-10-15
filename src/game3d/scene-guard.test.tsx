@@ -1,3 +1,12 @@
+import { render, screen } from '@testing-library/react-native';
+import { Text } from 'react-native';
+import type { WebGLRenderer } from 'three';
+
+import { updateSettings } from '@/state/actions';
+
+import { guardRender, SceneGuard } from './scene-guard';
+
+// Hoisted above the imports by Jest.
 jest.mock('expo-sqlite/localStorage/install', () => {
   const data = new Map<string, string>();
   (globalThis as { localStorage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> }).localStorage = {
@@ -7,14 +16,6 @@ jest.mock('expo-sqlite/localStorage/install', () => {
   };
   return {};
 });
-
-import { render, screen } from '@testing-library/react-native';
-import { Text } from 'react-native';
-import type { WebGLRenderer } from 'three';
-
-import { updateSettings } from '@/state/actions';
-
-import { guardRender, SceneGuard } from './scene-guard';
 
 function Healthy() {
   return <Text>scene</Text>;
