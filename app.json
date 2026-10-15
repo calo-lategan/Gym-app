@@ -25,6 +25,15 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_DISTANCE",
+        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+        "android.permission.health.READ_TOTAL_CALORIES_BURNED",
+        "android.permission.health.READ_EXERCISE",
+        "android.permission.health.READ_WEIGHT",
+        "android.permission.ACTIVITY_RECOGNITION"
+      ],
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
@@ -69,7 +78,17 @@
       "expo-sqlite",
       "expo-asset",
       "expo-sharing",
-      "expo-localization"
+      "expo-localization",
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      "expo-iap"
     ],
     "experiments": {
       "typedRoutes": true,
